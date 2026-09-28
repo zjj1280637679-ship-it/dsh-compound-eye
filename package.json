@@ -1,0 +1,50 @@
+{
+  "name": "dsh-compound-eye",
+  "version": "0.1.0",
+  "description": "Compound-eye image delivery for vision models: split a screenshot into tiles the model chooses, guarantee each target stays whole inside one delivered image, and hand back source rectangles so coordinates map back deterministically. It processes images only - it does not click, does not drive the desktop, and registers no computer-use provider.",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "vision",
+    "image",
+    "tiling",
+    "grounding",
+    "coordinates"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "cordis.patch.yml"
+    },
+    "compatibility": {
+      "node": ">=22.18.0",
+      "dsh": ">=0.1.2-rc.1"
+    }
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "test/",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "//dependencies": "There are deliberately NO runtime dependencies. See the peer note below.",
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*",
+    "@deepseek-ai/schemastery": "*"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.2-rc.1",
+    "@deepseek-ai/schemastery": "3.18.2"
+  },
+  "scripts": {
+    "test": "node test/selftest.mjs && node test/e2e-stub.mjs && node test/package-manifest.test.mjs",
+    "check": "node --check index.js && node --check lib/eye.js && node --check lib/grid.js && node --check lib/png.js && node --check lib/resample.js"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

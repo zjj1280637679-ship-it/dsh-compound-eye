@@ -1,0 +1,17 @@
+# dsh-compound-eye bundle patch: mount the compound-eye image tools.
+#
+# This plugin registers NO computer-use provider. The computer-use registry owns a single
+# exclusive provider slot, and this plugin does not compete for it: it only processes images.
+# That means it can be mounted beside any computer-use provider, including the one that
+# already owns the slot.
+- insert:
+    - id: dsh-compound-eye
+      name: dsh-compound-eye
+      config:
+        # Long edge the delivery channel accepts before it silently resamples. 1568 is the
+        # measured ceiling of the local capture path; a different host may differ, so it is
+        # configuration, not a constant in the code.
+        deliveryMaxEdge: 1568
+        # Hard cap on how many images one call may deliver. The model chooses the layer count;
+        # this only refuses absurd requests instead of spending a whole context on them.
+        maxTiles: 64
