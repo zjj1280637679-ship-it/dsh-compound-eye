@@ -1,0 +1,35 @@
+name: test
+
+# The tests are the only evidence this package offers, so they run on every push that could change the
+# behaviour: the pure core, the delivery path against a stub attachments service, and the manifest
+# contract that prevents the dual-package hazard (host packages must be peers, never dependencies).
+#
+# Windows is not decoration: this plugin's subject is the delivery path of screenshots on a desktop, and
+# the file/PNG handling it exercises is the part most likely to be platform-sensitive.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: syntax
+        run: node --check index.js && node --check lib/eye.js && node --check lib/grid.js && node --check lib/png.js && node --check lib/resample.js
+      - name: self-test (pure core)
+        run: node test/selftest.mjs
+      - name: end-to-end against a stub attachments service
+        run: node test/e2e-stub.mjs
+      - name: manifest contract
+        run: node --test test/package-manifest.test.mjs
