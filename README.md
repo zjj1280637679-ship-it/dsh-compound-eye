@@ -185,20 +185,30 @@ reader that misreported the delivered size and still landed every point within 8
 
 ## What is verified, and what is not
 
-The pure core is covered by `node test/selftest.mjs` (**23 assertions**): lossless PNG round-trip,
-refusal of formats it does not implement, exact 1:1 crops, range preservation under area-average
-shrink, the interpolation signature under enlargement, and the partition planner (fan-out, target
-continuity, refusal reporting, no degenerate tiles at any depth).
+`node test/selftest.mjs` — **33 assertions** on the pure core: lossless PNG round-trip, refusal of
+formats it does not implement, exact 1:1 crops, range preservation under area-average shrink, the
+interpolation signature under enlargement, and the partition planner (fan-out, target continuity,
+refusal reporting, no degenerate tiles at any depth).
+
+`node test/e2e-stub.mjs` — **22 assertions** on the full delivery path against a stub attachments
+service (plan → resample → encode → persist → image block), including a continuity re-check against the
+real label boxes measured in the originating experiment.
+
+`node --test test/package-manifest.test.mjs` — **4 assertions** locking the packaging contract that
+prevents the dual-package hazard.
 
 **Not yet verified, stated plainly:**
 
-- **No end-to-end run inside a live host.** The tools have not yet been mounted and called through the
-  attachments service in a real session.
+- **No end-to-end run inside a live host.** The tools have not been mounted and called through the
+  attachments service in a real session. Everything above runs against a stub.
 - **Coordinates have not been round-tripped through a real delivery.** The mapping arithmetic is
   tested; the full loop (plugin → host → model → normalized report → mapped back) has not.
 - **The clipping threshold is not calibrated against this planner.** The measured 19.4% of labels whose
   ink crosses a tile seam (5.6% never fully delivered) came from a **geometric** grid. This planner's
   target-aware cuts should reduce that, and the reduction has not been measured.
+- **The figures in this README come from two models and one synthetic capture.** The sample is small
+  (`n=36`, 1 SE ≈ 6.7 points) and the effect sizes for upscaling are within noise on the second model.
+  They are quoted as measurements with their conditions, not as general laws.
 
 ---
 
