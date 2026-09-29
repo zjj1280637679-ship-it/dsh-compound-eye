@@ -100,6 +100,18 @@ console.log('\n2) native default vs upscale:"max" (the delivery-scale knob, obse
   ok(b.tiles[0].delivered.w > a.tiles[0].delivered.w, '"max" delivers more pixels than native',
     `${a.tiles[0].delivered.w} -> ${b.tiles[0].delivered.w}`)
   ok(b.tiles[0].bytes > a.tiles[0].bytes, 'and the enlargement is real bytes, not just a label')
+  // The two scales must be told apart in words as well as in numbers: "0.408x of native" used to be
+  // ambiguous between "of the source file's pixels" and "of the pixels the screen once had". The measured
+  // gap between those two readings is 97.2% vs 44.4%, so a caption that blurs them misleads the reader.
+  ok(a.tiles.every(t => t.enlarged === false), 'default never marks a tile as enlarged')
+  ok(a.tiles.every(t => /source px 1:1/.test(t.caption)), 'native captions say "source px 1:1", not "of native"')
+  ok(b.tiles.every(t => t.enlarged === true), '"max" marks every tile as enlarged')
+  ok(b.tiles.every(t => /ENLARGED from \d+x\d+ source px/.test(t.caption)),
+    'enlarged captions name the source size they were enlarged from',
+    b.tiles[0].caption)
+  ok(!/of native/.test(b.tiles[0].caption), 'the ambiguous phrase "of native" is gone')
+  ok(/ENLARGED by interpolation/.test(b.result), 'the result warns that enlargement is interpolation')
+  ok(!/ENLARGED by interpolation/.test(a.result), 'the native path carries no such warning (no false alarm)')
 }
 
 console.log('\n3) Failures are named, and an over-cap REQUEST is reduced rather than refused')
