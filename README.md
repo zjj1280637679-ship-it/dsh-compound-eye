@@ -17,13 +17,28 @@ AI: compound_eye(image={path:"shot.png"}, depth=4, targets=[{x:960,y:540,w:80,h:
 
 ## Why this exists
 
-Two measured facts, both from a 3840×2160 experiment with 36 small labels across 11 independent
-reader runs ([full record](../../论文-交付尺度理论-20260929.md)):
+Three measured facts, from a 3840×2160 experiment with 36 small labels across 11 independent
+reader runs ([full record](docs/delivery-scale-theory.zh.md)) plus a later three-arm experiment
+([report](docs/experiment-three-arm.zh.md), appendix H of the paper):
 
 | Fact | Measurement |
 |---|---|
 | A whole-frame capture loses most of its pixels before the model sees it | 3840×2160 → delivered 1568×882 = **83.3% of source pixels discarded** |
 | Cropping recovers them, because a region can own the whole delivery budget | whole frame **2.8%** read → 16 tiles **86.1%** read, same model, same prompt |
+| **Cutting before downscaling beats cutting after it — and enlargement does not undo the loss** | native frame cut 1:1 **97.2%** read · frame pre-squeezed to the ceiling then cut **44.4%** · those same tiles enlarged back to the ceiling **30.6%** |
+
+The third row is the reason the default is *cut the native source, deliver at 1:1*. The enlarged arm
+delivered **2.67× more pixels than the native arm** and lost two thirds of the reads — so the ordering,
+not the scale, is what carries the result.
+
+Two caveats, stated because they bound the claim: the three-arm experiment enlarged tiles that had
+*already* been downscaled (interpolation cannot invent detail there), so it does **not** show that
+enlarging native detail is useless; and the 44.4% vs 30.6% gap is direction-consistent but **not claimed
+significant** — p=0.037 when only runs that never read a non-existent path are compared (2 vs 2), p=0.057
+pooling all six, and run-level tests are underpowered at these arm sizes (a 2 vs 2 permutation floor is
+≈0.20). Every pooled p-value here is also **anti-conservative**: the 36 labels come from 1–3 runs each
+and the native arm has a single run. What does hold in every framing is the run-by-run separation —
+97.2% against 22.2–50.0%, i.e. 47–75 points.
 
 And one failure that a plain crop loop walks straight into:
 
@@ -31,7 +46,7 @@ And one failure that a plain crop loop walks straight into:
 |---|---|
 | A target cut in half by a tile seam is unrecoverable | one clipped label read in **1 of 11 runs**, across two models and every delivery scale tested; upscaling did not help |
 
-That third row is the reason this plugin plans cuts instead of computing a grid.
+That row is the reason this plugin plans cuts instead of computing a grid.
 
 ---
 
@@ -41,10 +56,16 @@ That third row is the reason this plugin plans cuts instead of computing a grid.
    midpoint of the widest free gap between them. If a piece leaves no free gap, the cut is taken and
    **reported** (`report.forcedCuts`, `report.infeasible`, `report.straddling`) rather than silently
    producing half a target.
-2. **Tiles are delivered at native scale by default.** Enlarging is available
-   (`upscale:"2"` / `"max"`) but is **not** the default, because enlargement cannot create detail the
-   source lacks. When the ceiling does force a downscale, the result says so per tile.
-3. **The source rectangle travels with the image** — on the filename
+2. **The crop happens before any resampling.** A tile is cut out of the decoded source and only then
+   scaled to its delivery size, never the reverse — and the tool passes that guarantee on by asking for
+   the original capture. Measured on the same 36 labels: cut-then-scale **97.2%** read, scale-then-cut
+   **44.4%**.
+3. **Tiles are delivered at native scale by default.** Enlarging is available (`upscale:"2"` / `"max"`)
+   but is **not** the default, because enlargement cannot create detail the source lacks and on
+   already-downscaled content it measured *worse* than not enlarging at all. Each caption states whether
+   a tile is `source px 1:1`, forced down by the ceiling, or `ENLARGED … interpolation adds no detail`,
+   and the result warns when any tile was enlarged.
+4. **The source rectangle travels with the image** — on the filename
    (`tile_r2c3_x960_y540_w960_h540.png`) and in a caption directly above the image. The coordinate
    contract needs no legend.
 
@@ -190,15 +211,20 @@ formats it does not implement, exact 1:1 crops, range preservation under area-av
 interpolation signature under enlargement, and the partition planner (fan-out, target continuity,
 refusal reporting, no degenerate tiles at any depth).
 
-`node test/e2e-stub.mjs` — **22 assertions** on the full delivery path against a stub attachments
+`node test/e2e-stub.mjs` — **29 assertions** on the full delivery path against a stub attachments
 service (plan → resample → encode → persist → image block), including a continuity re-check against the
-real label boxes measured in the originating experiment.
+real label boxes measured in the originating experiment, and the separation of the three delivery
+states a caption can report (1:1 / forced down / enlarged).
 
 `node --test test/package-manifest.test.mjs` — **4 assertions** locking the packaging contract that
 prevents the dual-package hazard.
 
 **Not yet verified, stated plainly:**
 
+- **The three-arm numbers were not produced by this plugin.** They come from a script that reproduced
+  the plugin's three calling semantics (native cut · pre-downscaled cut · pre-downscaled cut + enlarge)
+  on the same source and labels. The plugin's own delivery path is exercised by the stub tests, not by
+  that experiment — the two are *isomorphic*, not identical.
 - **No end-to-end run inside a live host.** The tools have not been mounted and called through the
   attachments service in a real session. Everything above runs against a stub.
 - **Coordinates have not been round-tripped through a real delivery.** The mapping arithmetic is
@@ -209,6 +235,14 @@ prevents the dual-package hazard.
 - **The figures in this README come from two models and one synthetic capture.** The sample is small
   (`n=36`, 1 SE ≈ 6.7 points) and the effect sizes for upscaling are within noise on the second model.
   They are quoted as measurements with their conditions, not as general laws.
+
+---
+
+## Companion documents
+
+The paper, the three-arm experiment, the cross-model replication, the method note and the independent
+review live in [`docs/`](docs/README.md). They are included rather than linked because every number the
+README cites should be checkable from inside this repository.
 
 ---
 
