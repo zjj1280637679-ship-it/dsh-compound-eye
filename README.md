@@ -93,25 +93,38 @@ That row is the reason this plugin plans cuts instead of computing a grid.
 
 ---
 
-## Three modes, in the order they should be tried
+## One planner, three orthogonal knobs
 
-The plugin picks the mode from what you pass, and always reports which one ran (`report.mode`).
+There is no mode to choose. `report.mode` is a **label for what the plan turned out to be**, never a fork
+in behaviour, and the knobs compose:
 
-| Mode | When | What happens |
+| Knob | What it controls | What it never controls |
 |---|---|---|
-| **`simple`** | you declare no `targets` | An exact grid, no search. `depth` d gives `2^d` tiles split across both axes: on 16:9 that is 2×2 at 2, 4×4 at 4, 8×8 at 6 — the same ladder the L2..L5 experiment materials used. Predictable by construction. |
-| **`aware`** | you declare `targets` | Same fan-out, but every cut may shift into a free gap so no declared target is split. If the requested depth admits no such partition, the depth is **reduced** and said so; if *no* partition can keep a target whole (e.g. the target is a full-width band), you get a loud `infeasible` naming it. |
-| **`manual`** | you pass `tiles` | You supply the rectangles. The plugin **describes** them instead of judging them: it measures coverage and overlap and reports which targets straddle a boundary, but it does **not** rewrite anything and it does **not** require the layout to tile the frame. This is the escape hatch for a layout the planner cannot infer. |
+| `depth`, or `rows`+`cols` | **how many pieces**: `2^depth` tiles split across both axes (on 16:9: 2×2 at 2, 4×4 at 4, 8×8 at 6 — the same ladder the L2..L5 materials used) | anything else. The fan-out you ask for is the fan-out you get |
+| `targets` | **where the cuts fall**: each cut is placed in the widest free gap between declared targets | the fan-out. A target that cannot be kept whole at your fineness is **named**, not fixed by lowering your fineness |
+| `tiles` | **extra regions**, ADDED to whatever the fan-out produced — "the 4×4 grid, plus a zoom on the toolbar" is one call | the fan-out. It does not replace the grid, and it is never rewritten |
 
-Coverage in `manual` mode is not a pass/fail question, because "deliver all 16 quadrants" and "zoom into
-the three regions I care about" are both legitimate requests, and a deliberate overlap is how you keep a
-target whole across a seam. So the three cases are named rather than allowed or forbidden:
+An earlier design had three "modes" instead, and the target-aware one carried a self-imposed invariant —
+*never split a declared target* — that could **contradict the fan-out the caller asked for**. It resolved
+that contradiction by reducing the fan-out. That is the tool fighting itself: invent a strict rule, then
+break the caller's explicit request to keep it, and call the result "reduced" as if the caller had asked
+for it. Splitting a target is a **consequence of a fineness the caller chose**, so it is reported:
 
-| You built | You get |
+```
+PLAN: grid 4x4 (depth 4); even cuts (no target-aware placement was better).
+TARGETS: at this fan-out no cut placement keeps every declared target whole, so these are cut:
+toolbar-band; not whole inside any single tile: toolbar-band. The fan-out is the one you asked for --
+reported, not corrected. Lower the depth, add your own rectangles via `tiles`, or accept the split.
+```
+
+Coverage is described, not judged, because "deliver all 16 quadrants" and "zoom into three regions" are
+both legitimate requests and a deliberate overlap is how you keep a target whole across a seam:
+
+| The rectangles you ended up with | What you are told |
 |---|---|
-| a gapless, non-overlapping partition | `Manual layout accepted: the tiles tile the whole frame exactly (100% coverage, no overlap).` |
-| an overlapping layout | `…cover the whole frame, and overlap by 182 kpx (35.2% of the frame is delivered twice) -- overlap is how a target gets kept whole across a seam, so nothing is wrong here.` |
-| a partial layout | `…it is a PARTIAL delivery: 50.4% of the frame is delivered and 257 kpx (49.6%) is NOT delivered at all -- you will see nothing in those regions. Gaps, largest first (±4px): x=0 y=272 w=960 h=268. If any of them matter, add tiles for them…` |
+| a gapless partition | `LAYOUT: the delivered rectangles tile the whole frame exactly (100% coverage, no overlap).` |
+| overlapping | `LAYOUT: … cover the whole frame, and overlap by 182 kpx (35.2% of the frame is delivered twice) -- overlap is how a target gets kept whole across a seam, so nothing is wrong here.` |
+| partial | `LAYOUT is a PARTIAL delivery: 50.4% of the frame is delivered and 257 kpx (49.6%) is NOT delivered at all -- you will see nothing in those regions. Gaps, largest first (±4px): x=0 y=272 w=960 h=268. Add rectangles for any that matter…` |
 
 A layout that silently drops a region is the only real failure mode here, so the holes are named as
 rectangles (`report.coverage.gapRects`) instead of being summarised into a number. Only genuinely
@@ -120,14 +133,18 @@ lying entirely outside the frame. A tile that merely sticks out is delivered cli
 `report.clipped`.
 
 ```
-# simple: 16 tiles, all 960x540
+# fan-out only: 16 tiles, all 960x540
 compound_eye(image={path:"shot.png"}, depth=4)
 
-# aware: same 16 tiles, but no cut through the declared button
+# same fan-out, but no cut through the declared button
 compound_eye(image={path:"shot.png"}, depth=4,
              targets=[{x:936,y:884,w:58,h:20,label:"save"}])
 
-# manual: your own layout, described and reported back (partial or overlapping layouts welcome)
+# the grid AND a zoom region, in one call (they compose; `tiles` does not replace the grid)
+compound_eye(image={path:"shot.png"}, depth=4,
+             tiles=[{x:880,y:840,w:200,h:120}])
+
+# rectangles only, described and reported back (partial or overlapping layouts welcome)
 compound_eye(image={path:"shot.png"},
              tiles=[{x:0,y:0,w:960,h:2160},{x:960,y:0,w:960,h:2160},
                     {x:1920,y:0,w:960,h:2160},{x:2880,y:0,w:960,h:2160}])
@@ -196,8 +213,8 @@ Splits an image and returns the tiles as images.
 | `image` | `{path}` or `{base64, name}`. PNG only. |
 | `depth` | Number of splits; `2^depth` tiles. `0` = whole frame. **This is the model's knob** — the plugin never picks it. |
 | `rows` / `cols` | Explicit grid instead of `depth`. |
-| `targets` | Optional boxes that must stay whole in one tile. **Supply these whenever you know them** — this is what turns a grid into a plan. |
-| `tiles` | Optional manual layout: your own rectangles, described and reported, never rewritten. Partial and overlapping layouts are accepted and classified; only degenerate or fully off-frame rectangles are refused. |
+| `targets` | Optional boxes that must stay whole in one tile. **Supply these whenever you know them** — this decides where the cuts fall, and nothing else. If your fan-out cannot honour one, it is named, not fixed by shrinking your fan-out. |
+| `tiles` | Rectangles to ADD to the fan-out — they compose (grid + zoom regions in one call); on their own they ARE the layout. Described and reported, never rewritten. Partial and overlapping layouts are accepted and classified; only degenerate or fully off-frame rectangles are refused. |
 | `upscale` | `"native"` (default, never enlarges), a number, or `"max"`. |
 | `maxTiles` | Advisory threshold on images per call. Exceeding it does not trim or refuse: you get what you asked for, plus a note on the cost. |
 
@@ -223,15 +240,16 @@ reader that misreported the delivered size and still landed every point within 8
 
 ## What is verified, and what is not
 
-`node test/selftest.mjs` — **40 assertions** on the pure core: lossless PNG round-trip, refusal of
+`node test/selftest.mjs` — **45 assertions** on the pure core: lossless PNG round-trip, refusal of
 formats it does not implement, exact 1:1 crops, range preservation under area-average shrink, the
-interpolation signature under enlargement, and the partition planner (fan-out, target continuity,
-refusal reporting, no degenerate tiles at any depth).
+interpolation signature under enlargement, and the planner (fan-out never reduced at any depth, no
+degenerate tiles, targets kept whole where the fineness allows and named where it does not, coverage
+classified, and grid-plus-rectangles composition).
 
-`node test/e2e-stub.mjs` — **43 assertions** on the full delivery path against a stub attachments
+`node test/e2e-stub.mjs` — **46 assertions** on the full delivery path against a stub attachments
 service (plan → resample → encode → persist → image block), including a continuity re-check against the
 real label boxes measured in the originating experiment, the separation of the three delivery states a
-caption can report (1:1 / forced down / enlarged), and the classification a manual layout gets
+caption can report (1:1 / forced down / enlarged), and the classification a set of rectangles gets
 (exact / complete-overlapping / partial, with named holes).
 
 `node --test test/package-manifest.test.mjs` — **4 assertions** locking the packaging contract that
@@ -280,8 +298,9 @@ That check runs in CI, so the published figures cannot drift away from the shipp
   that only exists at call time — so a capability is never added by taking a freedom away. Concretely:
   - the size of a request is the caller's call. Ask for 64 tiles and you get 64, with a note about what
     that costs; `maxTiles` is an **advisory** threshold that makes the note appear earlier, not a wall.
-  - the shape of a layout is the caller's call. `manual` accepts a partial layout and an overlapping one
-    and *classifies* it, naming uncovered holes rather than refusing a subset you deliberately chose.
+  - the shape of a layout is the caller's call. Rectangles you supply are classified (exact /
+    complete-overlapping / partial) with uncovered holes named, rather than refused for being a subset you
+    deliberately chose; and they **compose** with the fan-out instead of replacing it.
   - the only ceiling left is physical and belongs to the operator: `hardMaxTiles` (one call cannot return
     more images than a context could hold). A refusal that does exist is a resource bound, not a taste,
     and it says so.
@@ -289,10 +308,13 @@ That check runs in CI, so the published figures cannot drift away from the shipp
     an unreadable image, an unsupported PNG, a missing attachments service, a degenerate rectangle, a
     rectangle lying entirely outside the frame. A rectangle that merely sticks out is delivered clipped
     and listed.
-- **Cuts never break a declared target.** If a target cannot be kept whole (it is a full-width band, say),
-  that is reported by name rather than silently cut through. `aware` may reduce the depth to keep that
-  promise, and says so — that reduction protects something the caller *did* declare, which is a different
-  thing from trimming a request the caller made.
+- **No rule that has to break the request to keep itself.** An invariant the tool invents internally must
+  never be paid for with the caller's explicit instruction. The planner used to treat "never split a
+  declared target" as such an invariant and, when the requested fan-out made it unsatisfiable, lowered the
+  fan-out — the tool fighting itself, and calling the result "reduced" as if the caller had asked for it.
+  Splitting a target is a *consequence of a fineness the caller chose*, so it is reported by name along
+  with the ways out (lower the depth, add rectangles, accept the split). The same shape of mistake is what
+  "no a-priori pruning" rules out one level up.
 - **No shared mutable state.** Every call states its own source; there is no "last image" or "last
   grid" to be overwritten by another caller.
 - **No implicit coupling.** The plugin imports from `lib/*` explicitly and stores nothing module-level.

@@ -125,9 +125,9 @@ console.log('\n3) Nothing is pruned in advance: the request is delivered, the si
   const exec = createExecutor({ ctx: ctxFor(store), cfg: { deliveryMaxEdge: 1568, maxTiles: 4 } })
   const r = await exec.run({ image: { path: SRC }, depth: 6 })
   ok(r.tiles.length === 64, `depth 6 delivers the 64 tiles that were asked for, above the advisory 4 (got ${r.tiles.length})`)
-  ok(r.report.depth === 6 && r.report.cappedFrom === null,
-    'and the report says depth 6 was delivered, with no cap reduction',
-    `depth=${r.report.depth} cappedFrom=${r.report.cappedFrom}`)
+  ok(r.report.depth === 6 && r.report.reduced === undefined && r.report.cappedFrom === undefined,
+    'and the report carries no reduction at all -- the fan-out asked for is the fan-out delivered',
+    `depth=${r.report.depth} reduced=${r.report.reduced} cappedFrom=${r.report.cappedFrom}`)
   ok(store.saved.length === 64, 'one call, 64 images persisted -- the size of the request is the caller\'s call')
   ok(/NOTE ON SIZE/.test(r.result) && /advisory threshold is 4/.test(r.result),
     'and the result explains the size instead of quietly trimming it')
@@ -185,7 +185,7 @@ console.log('\n3) Nothing is pruned in advance: the request is delivered, the si
   ok(/PARTIAL delivery/.test(partial.result) && /NOT delivered/.test(partial.result),
     'and the result says plainly that part of the frame is not delivered', partial.result.split('\n').find(l => /PARTIAL/.test(l)))
   ok(/x=\d+ y=\d+ w=\d+ h=\d+/.test(partial.result), 'naming the uncovered rectangles rather than only a percentage')
-  ok(/add tiles for them/.test(partial.result), 'and telling the caller what to do about it')
+  ok(/Add rectangles for any that matter/.test(partial.result), 'and telling the caller what to do about it')
 
   // An overlapping layout is the third case, and it is how you keep a target whole across a seam.
   const store4 = stubAttachments()
@@ -214,7 +214,15 @@ console.log('\n4) probe delivers nothing')
   const p = await exec.probe({ image: { path: SRC }, depth: 3, targets: labelsOnTile })
   ok(store.saved.length === 0, 'probe persisted zero images')
   ok(p.tiles.length === 8, `probe reported 8 tiles for depth 3 (got ${p.tiles.length})`)
-  ok(p.result.includes('Continuity OK') || p.result.includes('INFEASIBLE'), 'probe states the continuity verdict')
+  ok(/PLAN:/.test(p.result), 'probe describes the plan (fan-out and where the cuts came from)')
+  ok(/TARGETS:/.test(p.result), 'and states what happened to the declared targets')
+
+  // The probe is where a caller checks before spending a call that returns images, so it has to be able
+  // to show the fan-out it would get -- including a fan-out that cannot keep a target whole.
+  const bad = await exec.probe({ image: { path: SRC }, depth: 4, targets: [{ x: 0, y: 0, w: 960, h: 40, label: 'full-band' }] })
+  ok(/TARGETS:/.test(bad.result) && (bad.result.includes('full-band') || /whole inside one tile/.test(bad.result)),
+    'including a target the requested fan-out cannot keep whole, named rather than quietly fixed')
+  ok(bad.tiles.length === 16, 'while still reporting the fan-out that was asked for')
 }
 
 console.log(`\n${pass} passed, ${fail} failed`)

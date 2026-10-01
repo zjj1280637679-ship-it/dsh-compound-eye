@@ -149,58 +149,77 @@ console.log('3) Cuts avoid whole targets; when they cannot, the plan says so')
     'with room to spare the planner finds a feasible partition and straddles nothing',
     `infeasible=${d3.report.infeasible} straddling=${d3.report.straddling.length}`)
 
-  // Nothing may ever be returned that is not whole inside one tile: for each depth, the plan is either
-  // exactly 2^depth tiles or an honest reduction, every tile is non-degenerate, and every declared
-  // target fits inside some tile.
-  let degenerated = 0, lostTargets = 0, badCount = 0
+  // The fan-out is the caller's, at every depth, without exception: exactly 2^dep tiles, non-degenerate.
+  // A declared target that cannot be kept whole at that fineness must be NAMED, not silently fixed by
+  // changing the fan-out -- that silent fix was the planner fighting its own rule (see the plan summary).
+  let degenerated = 0, badCount = 0, unnamedSplits = 0
   for (let dep = 0; dep <= 6; dep++) {
     const g = planGrid(V, dep, [straddle, ...cols])
-    const exact = g.tiles.length === 2 ** dep
-    if (!exact && !(g.report.reduced === true && g.tiles.length < 2 ** dep)) badCount++
+    if (g.tiles.length !== 2 ** dep) badCount++
     for (const t of g.tiles) if (t.w <= 0 || t.h <= 0) degenerated++
     for (const tg of [straddle, ...cols]) {
       const fits = g.tiles.some(t => tg.x >= t.x && tg.x + tg.w <= t.x + t.w && tg.y >= t.y && tg.y + tg.h <= t.y + t.h)
-      if (!fits) lostTargets++
+      const named = g.report.straddling.includes(tg.label) || g.report.unprotected.includes(tg.label)
+      if (!fits && !named) unnamedSplits++
     }
   }
-  ok(degenerated === 0 && lostTargets === 0 && badCount === 0,
-    'at every depth: exact 2^depth or an honest reduction, non-degenerate tiles, every target whole',
-    `degenerate=${degenerated} unprotected=${lostTargets} badCount=${badCount}`)
+  ok(degenerated === 0 && badCount === 0,
+    'at every depth the fan-out is exactly 2^depth, with no degenerate tiles',
+    `degenerate=${degenerated} badCount=${badCount}`)
+  ok(unnamedSplits === 0,
+    'and any declared target that the requested fineness cannot keep whole is NAMED rather than fixed by reducing the fan-out',
+    `unnamed splits=${unnamedSplits}`)
 }
 
-console.log('4) Three delivery modes: simple (default), aware (targets), manual (caller-supplied)')
+console.log('4) One planner, orthogonal knobs: fan-out | targets (placement) | rectangles (extra regions)')
 {
   const V = { width: 3840, height: 2160 }
   const straddle = { x: 936, y: 884, w: 58, h: 20, label: 'straddler' }
 
-  // simple: no targets declared => no search, an exact grid, and the L2..L5 ladder.
+  // `report.mode` is a LABEL for what the plan turned out to be, not a fork in behaviour. The earlier
+  // design had three "modes" where one of them carried a self-imposed invariant that could contradict the
+  // caller's fan-out and resolved that by lowering the fan-out -- the tool fighting itself.
   const s4 = planGrid(V, 4, [])
-  ok(s4.report.mode === 'simple' && s4.tiles.length === 16 && s4.tiles[0].w === 960 && s4.tiles[0].h === 540,
-    'simple mode on 16:9 at depth 4 gives a 4x4 grid of 960x540 tiles',
+  ok(s4.report.mode === 'grid' && s4.tiles.length === 16 && s4.tiles[0].w === 960 && s4.tiles[0].h === 540,
+    'fan-out alone labels the plan "grid" and gives a 4x4 grid of 960x540 tiles on 16:9',
     `${s4.report.mode} ${s4.tiles.length} ${s4.tiles[0].w}x${s4.tiles[0].h}`)
   const dims = new Set(s4.tiles.map(t => `${t.w}x${t.h}`))
   ok(dims.size === 1, 'and every tile is the same size (no ragged edges)', [...dims].join(' '))
 
-  // aware: the same fan-out, but a declared target is not split.
+  // targets change WHERE the cuts fall. Nothing else -- in particular not how many tiles come back.
   const a4 = planGrid(V, 4, [straddle])
   const fits = a4.tiles.some(t => straddle.x >= t.x && straddle.x + straddle.w <= t.x + t.w
     && straddle.y >= t.y && straddle.y + straddle.h <= t.y + t.h)
-  ok(a4.report.mode === 'aware' && fits && a4.report.straddling.length === 0,
-    'aware mode keeps a declared straddler whole and reports no straddle',
+  ok(a4.report.mode === 'grid+targets' && fits && a4.report.straddling.length === 0,
+    'declaring a target keeps it whole and reports no straddle',
     `${a4.report.mode} fits=${fits} straddling=${a4.report.straddling.length}`)
+  ok(a4.tiles.length === 16 && a4.report.depth === 4,
+    'and the fan-out is still exactly the one that was asked for', `${a4.tiles.length} tiles, depth ${a4.report.depth}`)
 
-  // manual: caller rectangles are validated, never rewritten.
+  // rectangles on their own: described, never rewritten, never required to tile the frame.
   const good = [{ x: 0, y: 0, w: 960, h: 2160 }, { x: 960, y: 0, w: 960, h: 2160 },
                 { x: 1920, y: 0, w: 960, h: 2160 }, { x: 2880, y: 0, w: 960, h: 2160 }]
   const m = planGrid(V, 0, [straddle], { tiles: good })
-  ok(m.report.mode === 'manual' && m.report.ok === true, 'manual mode accepts a valid layout')
+  ok(m.report.mode === 'rectangles' && m.report.ok === true, 'rectangles alone label the plan "rectangles"')
   ok(JSON.stringify(m.report.straddling) === JSON.stringify(['straddler']),
-    'and tells the caller that this layout splits the target (it does not fix it)',
+    'and it tells the caller that this layout splits the target (it does not fix it)',
     JSON.stringify(m.report.straddling))
-  ok(m.tiles.length === 4 && m.tiles[0].x === 0 && m.tiles[0].w === 960, 'manual tiles come back unchanged')
+  ok(m.tiles.length === 4 && m.tiles[0].x === 0 && m.tiles[0].w === 960, 'caller rectangles come back unchanged')
   ok(m.report.coverage.mode === 'exact' && m.report.coverage.fraction === 1 && m.report.coverage.overlapPx === 0,
     'and classifies a gapless non-overlapping layout as exact',
     JSON.stringify(m.report.coverage.mode))
+
+  // COMPOSITION: fan-out and rectangles are not an either/or. "The 4x4 grid, plus a zoom on the toolbar"
+  // is one call. The earlier design made `tiles` REPLACE the grid, so the two could not be combined.
+  const composed = planGrid(V, 4, [], { tiles: [{ x: 900, y: 860, w: 120, h: 60 }] })
+  ok(composed.tiles.length === 17 && composed.report.gridTiles === 16 && composed.report.extraTiles === 1,
+    'a fan-out and extra rectangles compose into one delivery (grid + the regions you care about)',
+    `${composed.tiles.length} tiles = ${composed.report.gridTiles} grid + ${composed.report.extraTiles} extra`)
+  ok(composed.report.mode === 'grid+rectangles', 'and the label says so', composed.report.mode)
+  ok(composed.report.coverage.mode === 'complete-overlapping' && composed.report.coverage.overlapPx > 0,
+    'with the overlap measured rather than forbidden (the zoom region is inside a grid tile)',
+    `${composed.report.coverage.mode} overlap=${composed.report.coverage.overlapPx}`)
+
 
   // Coverage is DESCRIBED, not forbidden. A caller may deliberately deliver a subset ("zoom into the
   // three regions I care about") or deliberately overlap ("keep this target whole across a seam").
