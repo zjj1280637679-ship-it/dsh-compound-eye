@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: '22'
       - name: syntax
-        run: node --check index.js && node --check lib/eye.js && node --check lib/grid.js && node --check lib/png.js && node --check lib/resample.js
+        run: node --check index.js && node --check lib/eye.js && node --check lib/grid.js && node --check lib/placement.js && node --check lib/png.js && node --check lib/resample.js
       - name: self-test (pure core)
         run: node test/selftest.mjs
       - name: end-to-end against a stub attachments service

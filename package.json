@@ -42,7 +42,7 @@
   },
   "scripts": {
     "test": "node test/selftest.mjs && node test/e2e-stub.mjs && node test/package-manifest.test.mjs",
-    "check": "node --check index.js && node --check lib/eye.js && node --check lib/grid.js && node --check lib/png.js && node --check lib/resample.js"
+    "check": "node --check index.js && node --check lib/eye.js && node --check lib/grid.js && node --check lib/placement.js && node --check lib/png.js && node --check lib/resample.js"
   },
   "engines": {
     "node": ">=22.18.0"

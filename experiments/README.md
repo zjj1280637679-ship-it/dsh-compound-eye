@@ -68,6 +68,15 @@ overlap stops costing pixels, or if placement ever beats overlap in the no-clean
   numbers; the ~35 exploratory scratch scripts (peek/dbg/diag/tally variants) are omitted. If a number
   in a report ever needs re-deriving from scratch, the sessions are the source of truth, not those.
 
+## Byte fidelity, so nobody "tidies" the evidence later
+
+- Line endings are declared once in [`../.gitattributes`](../.gitattributes) (`* text=auto eol=lf`,
+  `*.png binary`). The repository stores LF everywhere; PNGs are never touched.
+- `three-arm/answers/*.txt` and `cross-model/out/*.txt` are **verbatim captures** of what a reader
+  emitted, including having no trailing newline. Adding one would edit the evidence, so they stay as-is.
+- `results/*.json`, `cross-model/token-usage.json` and `truth.json` are exactly what their scripts wrote.
+  Hand-formatting them would desync them from what `rescore.mjs` regenerates, so they stay as-is too.
+
 ## Path mapping
 
 The reports were written in the authoring workspace and cite paths like

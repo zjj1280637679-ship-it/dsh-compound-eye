@@ -1,0 +1,14 @@
+# Line endings, decided by the repository instead of by whoever clones it.
+#
+# Without this, `core.autocrlf=true` (the Windows default) converts on checkout, so the same commit
+# produces CRLF on one machine and LF on another -- and the working tree here had drifted into a mix
+# (8 files CRLF, 59 LF) because some of the experiment material was captured through tools that write
+# CRLF. One convention, stated once.
+* text=auto eol=lf
+
+# The stimuli are the evidence. Never touch their bytes.
+*.png binary
+
+# Windows-only files that must keep their own line endings if they are ever added.
+*.bat text eol=crlf
+*.cmd text eol=crlf

@@ -7,13 +7,13 @@ from inside the repository instead of being taken on trust.
 |---|---|
 | [`delivery-scale-theory.zh.md`](delivery-scale-theory.zh.md) | The hypothesis paper: statement, evidence, competing theory, falsification conditions, and appendices A–H with the raw measurements. **Appendix H is the three-arm experiment.** |
 | [`experiment-three-arm.zh.md`](experiment-three-arm.zh.md) | The three-arm experiment in full: design, run-level data, three statistical framings, the `where`/`what` split, the full misread table, and the honest limits. |
+| [`experiment-attention-vs-resolution.zh.md`](experiment-attention-vs-resolution.zh.md) | The first experiment (the L2..L5 level ladder): whole frame vs 2/4/16/32 tiles on one model. Its stimuli are in [`../experiments/first-experiment/`](../experiments/first-experiment). |
 | [`methodology-discriminative-experiments.zh.md`](methodology-discriminative-experiments.zh.md) | The method note: how to build an experiment that can actually discriminate between rival explanations, and the failure modes that were hit while doing it. |
 | [`cross-model-replication.zh.md`](cross-model-replication.zh.md) | The cross-model replication (a second model, five arms) that produced the "enlargement is a top-up, not a gain" correction. |
 | [`review-dsv4pro.md`](review-dsv4pro.md) | The independent review that found four hard errors in the paper's first draft, and what was done with each finding. |
 
-All five documents are in Chinese. They are snapshots copied from the authoring workspace; the paper is
+All six documents are in Chinese. They are snapshots copied from the authoring workspace; the paper is
 the living document and this copy tracks it at the commit date.
-
 The **raw material** behind every number — the 48 three-arm stimuli, the readers' answers, the ground
 truth and the scoring code, plus a runnable reproduction — lives in
 [`../experiments/`](../experiments/README.md). Two facts there are verified rather than assumed: which
