@@ -198,16 +198,42 @@ console.log('4) Three delivery modes: simple (default), aware (targets), manual 
     'and tells the caller that this layout splits the target (it does not fix it)',
     JSON.stringify(m.report.straddling))
   ok(m.tiles.length === 4 && m.tiles[0].x === 0 && m.tiles[0].w === 960, 'manual tiles come back unchanged')
+  ok(m.report.coverage.mode === 'exact' && m.report.coverage.fraction === 1 && m.report.coverage.overlapPx === 0,
+    'and classifies a gapless non-overlapping layout as exact',
+    JSON.stringify(m.report.coverage.mode))
 
+  // Coverage is DESCRIBED, not forbidden. A caller may deliberately deliver a subset ("zoom into the
+  // three regions I care about") or deliberately overlap ("keep this target whole across a seam").
+  // The earlier version made both fatal, which forced the caller to lie about intent -- the plugin's
+  // job is to say what the layout IS, not to overrule it. Only impossible rectangles stay fatal.
   const gapped = [{ x: 0, y: 0, w: 960, h: 2160 }, { x: 960, y: 0, w: 960, h: 2160 }]
-  ok(planGrid(V, 0, [], { tiles: gapped }).report.ok === false, 'manual mode rejects a layout with a gap')
+  const gap = planGrid(V, 0, [], { tiles: gapped }).report
+  ok(gap.ok === true, 'a partial layout is ACCEPTED (not refused)')
+  ok(gap.coverage.mode === 'partial' && gap.coverage.fraction > 0.49 && gap.coverage.fraction < 0.51,
+    'and is classified as partial with the covered fraction measured',
+    `mode=${gap.coverage.mode} fraction=${gap.coverage.fraction.toFixed(3)}`)
+  ok(gap.coverage.gapRects.length >= 1 && gap.coverage.gapRects[0].x >= 1920,
+    'and the uncovered region is named as a rectangle, not just summarised as a number',
+    JSON.stringify(gap.coverage.gapRects))
+  ok(gap.coverage.gapRects.reduce((s, r) => s + r.w * r.h, 0) > 0.45 * 3840 * 2160,
+    'and the named gaps account for the missing area (they are not a token gesture)',
+    String(gap.coverage.gapRects.reduce((s, r) => s + r.w * r.h, 0)))
+
   const overlapping = [{ x: 0, y: 0, w: 2000, h: 2160 }, { x: 1000, y: 0, w: 2840, h: 2160 }]
-  const ovr = planGrid(V, 0, [], { tiles: overlapping })
-  ok(ovr.report.ok === false && ovr.report.problems.some(p => /overlap/.test(p)),
-    'manual mode rejects an overlapping layout and says by how much',
-    ovr.report.problems.join('; '))
+  const ovr = planGrid(V, 0, [], { tiles: overlapping }).report
+  ok(ovr.ok === true, 'an overlapping layout is ACCEPTED (overlap is a legitimate way to keep a target whole)')
+  ok(ovr.coverage.mode === 'complete-overlapping' && ovr.coverage.overlapPx > 0,
+    'and the overlap is measured and reported',
+    `mode=${ovr.coverage.mode} overlap=${ovr.coverage.overlapPx}`)
+
   const outside = [{ x: 0, y: 0, w: 4000, h: 2160 }]
-  ok(planGrid(V, 0, [], { tiles: outside }).report.ok === false, 'manual mode rejects a tile leaving the viewport')
+  const out1 = planGrid(V, 0, [], { tiles: outside }).report
+  ok(out1.ok === true && out1.clipped.length === 1, 'a tile sticking out of the frame is delivered clipped, and listed')
+  const outside2 = [{ x: 5000, y: 0, w: 400, h: 400 }]
+  ok(planGrid(V, 0, [], { tiles: outside2 }).report.ok === false,
+    'but a tile lying entirely outside the frame is fatal (there is nothing to deliver)')
+  const degenerate = [{ x: 0, y: 0, w: 0, h: 100 }]
+  ok(planGrid(V, 0, [], { tiles: degenerate }).report.ok === false, 'and a degenerate tile is fatal')
 }
 
 console.log('5) Real screenshot: the crop path against the measured materials')

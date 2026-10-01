@@ -141,6 +141,33 @@ console.log('\n3) Failures are named, and an over-cap REQUEST is reduced rather 
   ok(/above the cap/.test(msg), 'an over-cap manual layout is refused with its reason', msg)
   ok(store2.saved.length === 0, 'and nothing was persisted before the refusal')
 
+  // A PARTIAL manual layout is the opposite case: the caller is deliberately delivering only the regions
+  // it cares about, so it must be DELIVERED (refusing would cost a step and force the caller to pad the
+  // layout with tiles it does not want) -- but the result has to name what was left out, because a layout
+  // that silently drops a region is the one failure mode that actually matters.
+  const store3 = stubAttachments()
+  const exec3 = createExecutor({ ctx: ctxFor(store3), cfg: { deliveryMaxEdge: 1568, maxTiles: 64 } })
+  const partial = await exec3.run({
+    image: { path: SRC },
+    tiles: [{ x: 0, y: 0, w: 480, h: 270 }, { x: 480, y: 0, w: 480, h: 270 }],
+  })
+  ok(partial.tiles.length === 2, 'a partial manual layout is delivered, not refused')
+  ok(store3.saved.length === 2, 'and its two images are persisted')
+  ok(/PARTIAL delivery/.test(partial.result) && /NOT delivered/.test(partial.result),
+    'and the result says plainly that part of the frame is not delivered', partial.result.split('\n').find(l => /PARTIAL/.test(l)))
+  ok(/x=\d+ y=\d+ w=\d+ h=\d+/.test(partial.result), 'naming the uncovered rectangles rather than only a percentage')
+  ok(/add tiles for them/.test(partial.result), 'and telling the caller what to do about it')
+
+  // An overlapping layout is the third case, and it is how you keep a target whole across a seam.
+  const store4 = stubAttachments()
+  const exec4 = createExecutor({ ctx: ctxFor(store4), cfg: { deliveryMaxEdge: 1568, maxTiles: 64 } })
+  const over = await exec4.run({
+    image: { path: SRC },
+    tiles: [{ x: 0, y: 0, w: 540, h: 540 }, { x: 420, y: 0, w: 540, h: 540 }],
+  })
+  ok(over.tiles.length === 2 && /overlap/.test(over.result),
+    'an overlapping layout is delivered and its overlap is described', over.result.split('\n')[0])
+
   const noAtt = createExecutor({ ctx: { get: () => undefined }, cfg: {} })
   let msg2 = ''
   try { await noAtt.run({ image: { path: SRC }, depth: 1 }) } catch (e) { msg2 = e.message }

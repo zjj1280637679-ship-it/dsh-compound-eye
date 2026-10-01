@@ -100,7 +100,23 @@ The plugin picks the mode from what you pass, and always reports which one ran (
 |---|---|---|
 | **`simple`** | you declare no `targets` | An exact grid, no search. `depth` d gives `2^d` tiles split across both axes: on 16:9 that is 2×2 at 2, 4×4 at 4, 8×8 at 6 — the same ladder the L2..L5 experiment materials used. Predictable by construction. |
 | **`aware`** | you declare `targets` | Same fan-out, but every cut may shift into a free gap so no declared target is split. If the requested depth admits no such partition, the depth is **reduced** and said so; if *no* partition can keep a target whole (e.g. the target is a full-width band), you get a loud `infeasible` naming it. |
-| **`manual`** | you pass `tiles` | You supply the rectangles. The plugin **validates** them (full coverage, no overlap, no degenerate tile, nothing outside the frame) and reports which targets straddle a boundary — but it does **not** rewrite them. This is the escape hatch for a layout the planner cannot infer. |
+| **`manual`** | you pass `tiles` | You supply the rectangles. The plugin **describes** them instead of judging them: it measures coverage and overlap and reports which targets straddle a boundary, but it does **not** rewrite anything and it does **not** require the layout to tile the frame. This is the escape hatch for a layout the planner cannot infer. |
+
+Coverage in `manual` mode is not a pass/fail question, because "deliver all 16 quadrants" and "zoom into
+the three regions I care about" are both legitimate requests, and a deliberate overlap is how you keep a
+target whole across a seam. So the three cases are named rather than allowed or forbidden:
+
+| You built | You get |
+|---|---|
+| a gapless, non-overlapping partition | `Manual layout accepted: the tiles tile the whole frame exactly (100% coverage, no overlap).` |
+| an overlapping layout | `…cover the whole frame, and overlap by 182 kpx (35.2% of the frame is delivered twice) -- overlap is how a target gets kept whole across a seam, so nothing is wrong here.` |
+| a partial layout | `…it is a PARTIAL delivery: 50.4% of the frame is delivered and 257 kpx (49.6%) is NOT delivered at all -- you will see nothing in those regions. Gaps, largest first (±4px): x=0 y=272 w=960 h=268. If any of them matter, add tiles for them…` |
+
+A layout that silently drops a region is the only real failure mode here, so the holes are named as
+rectangles (`report.coverage.gapRects`) instead of being summarised into a number. Only genuinely
+impossible rectangles are refused, and only before anything is persisted: a degenerate tile, or one
+lying entirely outside the frame. A tile that merely sticks out is delivered clipped and listed in
+`report.clipped`.
 
 ```
 # simple: 16 tiles, all 960x540
@@ -110,7 +126,7 @@ compound_eye(image={path:"shot.png"}, depth=4)
 compound_eye(image={path:"shot.png"}, depth=4,
              targets=[{x:936,y:884,w:58,h:20,label:"save"}])
 
-# manual: your own layout, validated and reported back
+# manual: your own layout, described and reported back (partial or overlapping layouts welcome)
 compound_eye(image={path:"shot.png"},
              tiles=[{x:0,y:0,w:960,h:2160},{x:960,y:0,w:960,h:2160},
                     {x:1920,y:0,w:960,h:2160},{x:2880,y:0,w:960,h:2160}])
@@ -180,7 +196,7 @@ Splits an image and returns the tiles as images.
 | `depth` | Number of splits; `2^depth` tiles. `0` = whole frame. **This is the model's knob** — the plugin never picks it. |
 | `rows` / `cols` | Explicit grid instead of `depth`. |
 | `targets` | Optional boxes that must stay whole in one tile. **Supply these whenever you know them** — this is what turns a grid into a plan. |
-| `tiles` | Optional manual layout: your own rectangles, validated and reported, never rewritten. |
+| `tiles` | Optional manual layout: your own rectangles, described and reported, never rewritten. Partial and overlapping layouts are accepted and classified; only degenerate or fully off-frame rectangles are refused. |
 | `upscale` | `"native"` (default, never enlarges), a number, or `"max"`. |
 | `maxTiles` | Per-call cap. |
 
