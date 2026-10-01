@@ -85,7 +85,8 @@ That row is the reason this plugin plans cuts instead of computing a grid.
 - name: dsh-compound-eye
   config:
     deliveryMaxEdge: 1568   # long edge the delivery channel accepts before it resamples
-    maxTiles: 64            # refuse instead of flooding the context
+    maxTiles: 64            # ADVISORY: exceeding it explains the cost, it never trims or refuses
+    hardMaxTiles: 10000     # the only real ceiling, and an operator's resource bound, not a layout policy
 ```
 
 > ⚠️ **Plugin code changes need a host restart.** Editing this package does not affect a running host.
@@ -198,7 +199,7 @@ Splits an image and returns the tiles as images.
 | `targets` | Optional boxes that must stay whole in one tile. **Supply these whenever you know them** — this is what turns a grid into a plan. |
 | `tiles` | Optional manual layout: your own rectangles, described and reported, never rewritten. Partial and overlapping layouts are accepted and classified; only degenerate or fully off-frame rectangles are refused. |
 | `upscale` | `"native"` (default, never enlarges), a number, or `"max"`. |
-| `maxTiles` | Per-call cap. |
+| `maxTiles` | Advisory threshold on images per call. Exceeding it does not trim or refuse: you get what you asked for, plus a note on the cost. |
 
 ### `compound_eye_probe`
 Same planning, **no images returned**: tile rectangles, delivery sizes, and whether any declared target
@@ -222,15 +223,16 @@ reader that misreported the delivered size and still landed every point within 8
 
 ## What is verified, and what is not
 
-`node test/selftest.mjs` — **33 assertions** on the pure core: lossless PNG round-trip, refusal of
+`node test/selftest.mjs` — **40 assertions** on the pure core: lossless PNG round-trip, refusal of
 formats it does not implement, exact 1:1 crops, range preservation under area-average shrink, the
 interpolation signature under enlargement, and the partition planner (fan-out, target continuity,
 refusal reporting, no degenerate tiles at any depth).
 
-`node test/e2e-stub.mjs` — **29 assertions** on the full delivery path against a stub attachments
+`node test/e2e-stub.mjs` — **40 assertions** on the full delivery path against a stub attachments
 service (plan → resample → encode → persist → image block), including a continuity re-check against the
-real label boxes measured in the originating experiment, and the separation of the three delivery
-states a caption can report (1:1 / forced down / enlarged).
+real label boxes measured in the originating experiment, the separation of the three delivery states a
+caption can report (1:1 / forced down / enlarged), and the classification a manual layout gets
+(exact / complete-overlapping / partial, with named holes).
 
 `node --test test/package-manifest.test.mjs` — **4 assertions** locking the packaging contract that
 prevents the dual-package hazard.
@@ -264,14 +266,24 @@ README cites should be checkable from inside this repository.
 
 ## Design constraints this package follows
 
-- **Rather see more than miss.** A request is never refused merely because it asked for more than the
-  cap allows: the plugin delivers the deepest split that fits and says the depth was capped. A refusal
-  costs the caller another STEP, and a step resends the whole context (see the cost table above). Only
-  genuinely impossible requests are refused, and only before anything is persisted:
-  an unreadable image, a missing attachments service, an over-cap **manual** layout (which cannot be
-  reduced without breaking the rectangles the caller chose).
+- **No a-priori pruning.** The plugin describes; it does not decide for the caller. The caller is a model
+  in conditions this plugin cannot see — a different budget, a different consumer for the images, a reason
+  that only exists at call time — so a capability is never added by taking a freedom away. Concretely:
+  - the size of a request is the caller's call. Ask for 64 tiles and you get 64, with a note about what
+    that costs; `maxTiles` is an **advisory** threshold that makes the note appear earlier, not a wall.
+  - the shape of a layout is the caller's call. `manual` accepts a partial layout and an overlapping one
+    and *classifies* it, naming uncovered holes rather than refusing a subset you deliberately chose.
+  - the only ceiling left is physical and belongs to the operator: `hardMaxTiles` (one call cannot return
+    more images than a context could hold). A refusal that does exist is a resource bound, not a taste,
+    and it says so.
+  - "I cannot do this" is reserved for the physically impossible, always before anything is persisted:
+    an unreadable image, an unsupported PNG, a missing attachments service, a degenerate rectangle, a
+    rectangle lying entirely outside the frame. A rectangle that merely sticks out is delivered clipped
+    and listed.
 - **Cuts never break a declared target.** If a target cannot be kept whole (it is a full-width band, say),
-  that is reported by name rather than silently cut through.
+  that is reported by name rather than silently cut through. `aware` may reduce the depth to keep that
+  promise, and says so — that reduction protects something the caller *did* declare, which is a different
+  thing from trimming a request the caller made.
 - **No shared mutable state.** Every call states its own source; there is no "last image" or "last
   grid" to be overwritten by another caller.
 - **No implicit coupling.** The plugin imports from `lib/*` explicitly and stores nothing module-level.

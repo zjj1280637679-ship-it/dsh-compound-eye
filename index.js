@@ -41,12 +41,21 @@ export const Config = z.object({
    * constant compiled into the code -- and it is what makes "delivered at native scale" checkable.
    */
   deliveryMaxEdge: z.number().default(1568),
-  /** Absolute cap on images returned by one call. Guards the context, not the algorithm. */
+  /**
+   * ADVISORY threshold on images returned by one call. It does not trim, reduce or refuse anything --
+   * exceeding it makes the result explain the size and its cost. Sizing a request is the caller's
+   * decision, and the caller is a model in conditions this plugin cannot see.
+   */
   maxTiles: z.number().default(64),
+  /**
+   * The only real ceiling, and an operator's resource bound rather than a policy on layouts: one call
+   * cannot hand back more images than a context could hold. Raise it if your host has the budget.
+   */
+  hardMaxTiles: z.number().default(10000),
 })
 
 export function apply(ctx, config) {
-  const cfg = { deliveryMaxEdge: 1568, maxTiles: 64, ...(config ?? {}) }
+  const cfg = { deliveryMaxEdge: 1568, maxTiles: 64, hardMaxTiles: 10000, ...(config ?? {}) }
   const exec = createExecutor({ ctx, cfg })
 
   ctx.effect(() => {

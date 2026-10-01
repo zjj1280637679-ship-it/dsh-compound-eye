@@ -114,32 +114,47 @@ console.log('\n2) native default vs upscale:"max" (the delivery-scale knob, obse
   ok(!/ENLARGED by interpolation/.test(a.result), 'the native path carries no such warning (no false alarm)')
 }
 
-console.log('\n3) Failures are named, and an over-cap REQUEST is reduced rather than refused')
+console.log('\n3) Nothing is pruned in advance: the request is delivered, the size is reported')
 {
-  // An over-cap request must NOT be refused: in an agent loop a refusal costs another STEP, and a step
-  // resends the whole context. The planner delivers the deepest split that fits and says so.
+  // The plugin used to reduce an over-cap depth and to REFUSE an over-cap manual layout. Both decide for
+  // the caller, and the caller is a model in conditions the plugin cannot see -- a bigger budget, a
+  // different consumer for the images, a reason that only exists at call time. A refusal also costs
+  // another STEP, and a step resends the whole context. So `maxTiles` is now advisory: ask for 64 and
+  // you get 64, with a note about the size; the only ceiling left is a physical one (hardMaxTiles).
   const store = stubAttachments()
   const exec = createExecutor({ ctx: ctxFor(store), cfg: { deliveryMaxEdge: 1568, maxTiles: 4 } })
   const r = await exec.run({ image: { path: SRC }, depth: 6 })
-  ok(r.tiles.length === 4, `depth 6 over a cap of 4 delivered 4 tiles, not an error (got ${r.tiles.length})`)
-  ok(r.report.cappedFrom === 6 && r.report.depth === 2, 'and the report names the requested depth and the delivered one',
-    `cappedFrom=${r.report.cappedFrom} depth=${r.report.depth}`)
-  ok(store.saved.length === 4, 'exactly one call, four images persisted -- no retry step needed')
+  ok(r.tiles.length === 64, `depth 6 delivers the 64 tiles that were asked for, above the advisory 4 (got ${r.tiles.length})`)
+  ok(r.report.depth === 6 && r.report.cappedFrom === null,
+    'and the report says depth 6 was delivered, with no cap reduction',
+    `depth=${r.report.depth} cappedFrom=${r.report.cappedFrom}`)
+  ok(store.saved.length === 64, 'one call, 64 images persisted -- the size of the request is the caller\'s call')
+  ok(/NOTE ON SIZE/.test(r.result) && /advisory threshold is 4/.test(r.result),
+    'and the result explains the size instead of quietly trimming it')
+  ok(/Nothing was trimmed/.test(r.result) && /compound_eye_probe/.test(r.result),
+    'and points at the zero-image way to plan the same layout if 64 was not the intent')
 
-  // An over-cap MANUAL layout is different: it cannot be reduced without breaking the caller's own
-  // rectangles, so it is refused BEFORE anything is persisted.
+  // A manual layout above the advisory threshold is delivered too: the caller NAMED those rectangles, so
+  // dropping any of them would change what was asked for, and there is no principled way to choose which.
   const store2 = stubAttachments()
   const exec2 = createExecutor({ ctx: ctxFor(store2), cfg: { deliveryMaxEdge: 1568, maxTiles: 2 } })
-  let msg = ''
-  try {
-    await exec2.run({
-      image: { path: SRC },
-      tiles: [{ x: 0, y: 0, w: 480, h: 540 }, { x: 480, y: 0, w: 480, h: 540 },
-              { x: 0, y: 270, w: 480, h: 270 }, { x: 480, y: 270, w: 480, h: 270 }],
-    })
-  } catch (e) { msg = e.message }
-  ok(/above the cap/.test(msg), 'an over-cap manual layout is refused with its reason', msg)
-  ok(store2.saved.length === 0, 'and nothing was persisted before the refusal')
+  const r2 = await exec2.run({
+    image: { path: SRC },
+    tiles: [{ x: 0, y: 0, w: 480, h: 540 }, { x: 480, y: 0, w: 480, h: 540 },
+            { x: 0, y: 270, w: 480, h: 270 }, { x: 480, y: 270, w: 480, h: 270 }],
+  })
+  ok(r2.tiles.length === 4, 'an over-threshold manual layout is delivered, not refused')
+  ok(store2.saved.length === 4, 'and all four of its images are persisted')
+  ok(/NOTE ON SIZE/.test(r2.result), 'with the same size note')
+
+  // The ONE ceiling left is physical, and it is the operator's (hardMaxTiles), not a taste about layouts.
+  const store5 = stubAttachments()
+  const exec5 = createExecutor({ ctx: ctxFor(store5), cfg: { deliveryMaxEdge: 1568, maxTiles: 4, hardMaxTiles: 8 } })
+  let msg5 = ''
+  try { await exec5.run({ image: { path: SRC }, depth: 6 }) } catch (e) { msg5 = e.message }
+  ok(/exceeds what one call can return/.test(msg5) && /physical\/context bound/.test(msg5),
+    'the physical bound still refuses, and says it is a resource bound rather than a rule about your layout', msg5)
+  ok(store5.saved.length === 0, 'and nothing is persisted when that bound is hit')
 
   // A PARTIAL manual layout is the opposite case: the caller is deliberately delivering only the regions
   // it cares about, so it must be DELIVERED (refusing would cost a step and force the caller to pad the
