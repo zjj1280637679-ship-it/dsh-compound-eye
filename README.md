@@ -228,7 +228,7 @@ formats it does not implement, exact 1:1 crops, range preservation under area-av
 interpolation signature under enlargement, and the partition planner (fan-out, target continuity,
 refusal reporting, no degenerate tiles at any depth).
 
-`node test/e2e-stub.mjs` — **40 assertions** on the full delivery path against a stub attachments
+`node test/e2e-stub.mjs` — **43 assertions** on the full delivery path against a stub attachments
 service (plan → resample → encode → persist → image block), including a continuity re-check against the
 real label boxes measured in the originating experiment, the separation of the three delivery states a
 caption can report (1:1 / forced down / enlarged), and the classification a manual layout gets

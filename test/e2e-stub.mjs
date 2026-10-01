@@ -148,13 +148,27 @@ console.log('\n3) Nothing is pruned in advance: the request is delivered, the si
   ok(/NOTE ON SIZE/.test(r2.result), 'with the same size note')
 
   // The ONE ceiling left is physical, and it is the operator's (hardMaxTiles), not a taste about layouts.
+  // Assert the invariant, not one wording: it refuses, it names the knob as a resource bound rather than a
+  // rule about the caller's layout, and it points at the zero-image way to look first.
   const store5 = stubAttachments()
   const exec5 = createExecutor({ ctx: ctxFor(store5), cfg: { deliveryMaxEdge: 1568, maxTiles: 4, hardMaxTiles: 8 } })
   let msg5 = ''
   try { await exec5.run({ image: { path: SRC }, depth: 6 }) } catch (e) { msg5 = e.message }
-  ok(/exceeds what one call can return/.test(msg5) && /physical\/context bound/.test(msg5),
-    'the physical bound still refuses, and says it is a resource bound rather than a rule about your layout', msg5)
+  ok(/deliverable bound|exceeds what one call can return/.test(msg5),
+    'the physical bound still refuses, naming the size it refused', msg5)
+  ok(/hardMaxTiles/.test(msg5) && /(resource bound|physical\/context bound)/.test(msg5),
+    'and says it is an operator resource bound, not a rule about your layout')
+  ok(/compound_eye_probe/.test(msg5), 'and points at the zero-image way to inspect the fan-out first')
   ok(store5.saved.length === 0, 'and nothing is persisted when that bound is hit')
+
+  // The bound is the operator's knob, so raising it must actually raise the ceiling -- otherwise the knob
+  // is decorative and the plugin is still the one deciding. Same request, same config, only hardMaxTiles.
+  const store6 = stubAttachments()
+  const exec6 = createExecutor({ ctx: ctxFor(store6), cfg: { deliveryMaxEdge: 1568, maxTiles: 4, hardMaxTiles: 10000 } })
+  const r6 = await exec6.run({ image: { path: SRC }, depth: 6 })
+  ok(r6.tiles.length === 64 && store6.saved.length === 64,
+    'the same depth 6 delivers all 64 tiles once the operator raises hardMaxTiles',
+    `tiles=${r6.tiles.length}`)
 
   // A PARTIAL manual layout is the opposite case: the caller is deliberately delivering only the regions
   // it cares about, so it must be DELIVERED (refusing would cost a step and force the caller to pad the
