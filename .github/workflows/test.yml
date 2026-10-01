@@ -36,3 +36,11 @@ jobs:
         run: node test/e2e-stub.mjs
       - name: manifest contract
         run: node --test test/package-manifest.test.mjs
+      # The published numbers must stay reproducible from the material shipped in experiments/. Without
+      # this step the answers or truth.json could drift and the archive would keep printing something
+      # plausible that no longer matches the reports. It checks integer counts exactly and pooled z to
+      # 0.005, and it names every mismatch on failure.
+      - name: published figures still reproduce
+        run: node experiments/three-arm/rescore.mjs --check
+      - name: the two L5 stimulus sets are the same image
+        run: node experiments/three-arm/as-run/compare-stimuli.mjs

@@ -1,0 +1,39 @@
+OBSERVED: img01.png | K7Q | u=0.290 v=0.222
+OBSERVED: img01.png | M3Z | u=0.956 v=0.348
+OBSERVED: img02.png | V8L | u=0.286 v=0.133
+OBSERVED: img02.png | T4B | u=0.217 v=0.711
+OBSERVED: img03.png | R9T | u=0.661 v=0.367
+OBSERVED: img03.png | F1S | u=0.551 v=0.930
+OBSERVED: img03.png | D5H | u=0.065 v=0.987
+OBSERVED: img04.png | K6R | u=0.010 v=0.663
+OBSERVED: img04.png | N2J | u=0.559 v=0.689
+OBSERVED: img05.png | Y7F | u=0.309 v=0.222
+OBSERVED: img05.png | Q3G | u=0.941 v=0.474
+OBSERVED: img06.png | D8K | u=0.457 v=0.089
+OBSERVED: img06.png | X7N | u=0.234 v=0.567
+OBSERVED: img07.png | W9C | u=0.721 v=0.296
+OBSERVED: img07.png | P5R | u=0.057 v=0.959
+OBSERVED: img08.png | Z2W | u=0.711 v=0.133
+OBSERVED: img08.png | J4S | u=0.113 v=0.552
+OBSERVED: img08.png | R1G | u=0.761 v=0.715
+OBSERVED: img09.png | B4X | u=0.370 v=0.485
+OBSERVED: img09.png | G7Y | u=0.396 v=0.870
+OBSERVED: img10.png | L8P | u=0.302 v=0.548
+OBSERVED: img10.png | H5V | u=0.979 v=0.826
+OBSERVED: img11.png | J6W | u=0.038 v=0.252
+OBSERVED: img11.png | P2N | u=0.681 v=0.330
+OBSERVED: img11.png | C3K | u=0.050 v=0.856
+OBSERVED: img11.png | Z9M | u=0.715 v=0.959
+OBSERVED: img12.png | S1D | u=0.602 v=0.526
+OBSERVED: img13.png | A4T | u=0.449 v=0.319
+OBSERVED: img13.png | H9B | u=0.261 v=0.937
+OBSERVED: img14.png | M6F | u=0.982 v=0.144
+OBSERVED: img14.png | V9D | u=0.239 v=0.615
+OBSERVED: img15.png | E6X | u=0.126 v=0.374
+OBSERVED: img15.png | U2N | u=0.807 v=0.485
+OBSERVED: img16.png | T3L | u=0.700 v=0.096
+OBSERVED: img16.png | Q6Y | u=0.063 v=0.748
+OBSERVED: img16.png | B3C | u=0.582 v=0.819
+UNCERTAIN: img02.png | u=0.996 v=0.659 | unreadable (only one character "X" visible, code cut at right boundary)
+UNCERTAIN: img16.png | u=0.002 v=0.122 | unreadable (single clipped sliver at left boundary)
+TOTAL_OBSERVED: 36

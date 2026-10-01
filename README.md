@@ -262,6 +262,15 @@ The paper, the three-arm experiment, the cross-model replication, the method not
 review live in [`docs/`](docs/README.md). They are included rather than linked because every number the
 README cites should be checkable from inside this repository.
 
+The raw material behind those numbers lives in [`experiments/`](experiments/README.md): the 48 stimuli
+the three readers were actually given, their answers verbatim, the ground truth, and the scoring code.
+
+```bash
+node experiments/three-arm/rescore.mjs --check   # reproduces the published table, or fails loudly
+```
+
+That check runs in CI, so the published figures cannot drift away from the shipped data unnoticed.
+
 ---
 
 ## Design constraints this package follows

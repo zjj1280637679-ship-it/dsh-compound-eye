@@ -14,6 +14,14 @@ from inside the repository instead of being taken on trust.
 All five documents are in Chinese. They are snapshots copied from the authoring workspace; the paper is
 the living document and this copy tracks it at the commit date.
 
+The **raw material** behind every number — the 48 three-arm stimuli, the readers' answers, the ground
+truth and the scoring code, plus a runnable reproduction — lives in
+[`../experiments/`](../experiments/README.md). Two facts there are verified rather than assumed: which
+run belongs to which arm (the three arms use identical filenames, so identity comes from `read_image`
+paths), and that the two L5 stimulus sets sharing a name but not a hash are pixel-identical once
+decoded. CI runs `node experiments/three-arm/rescore.mjs --check`, so the published table cannot drift
+away from the shipped data unnoticed.
+
 ## The one number that motivates the default
 
 | Delivery | Per-tile | Total delivered pixels | Labels read |

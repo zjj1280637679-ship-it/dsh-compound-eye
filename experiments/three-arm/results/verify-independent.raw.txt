@@ -1,0 +1,176 @@
+=== 0. GROUND TRUTH ===
+truth.json: 18811 bytes, UTF-8 BOM present = true
+source 3840x2160, maxEdge=1568
+labels=36, level-5 tiles=16, duplicate codes=0
+min pairwise label separation = 203.8px (B4X vs G7Y); 2x gate = 120px
+
+=== 1. TILE DIMENSIONS (IHDR bytes 16..24) ===
+naive         n=16  IHDR='IHDR'  dims: 960x540 x16
+down-only     n=16  IHDR='IHDR'  dims: 392x221 x12, 392x220 x4
+              minority-height tiles: L5_05_x0_y1620_w960_h540.png, L5_07_x960_y1620_w960_h540.png, L5_13_x1920_y1620_w960_h540.png, L5_15_x2880_y1620_w960_h540.png
+down-then-up  n=16  IHDR='IHDR'  dims: 1568x884 x12, 1568x880 x4
+              minority-height tiles: L5_05_x0_y1620_w960_h540.png, L5_07_x960_y1620_w960_h540.png, L5_13_x1920_y1620_w960_h540.png, L5_15_x2880_y1620_w960_h540.png
+filename sets identical across arms: true
+all 16 truth L5 names present in every arm: true
+
+=== 2. PER-SESSION DERIVATION ===
+
+--- 7ced3634  7ced3634-8803-42c0-93f7-c2a48ea4c299
+    label="Rerun naive with explicit filenames"  model=doubao-seed-evolving  steps=10  frames=41 failed=0  badLines=0
+    snapshot: 63721 bytes, mtime=2026-09-29T12:08:25.069Z, sha256=f0c9599fc5e1b867...
+    PROMPT family=explicit-16-filename-list; arm in prompt=naive; arm from read paths=naive; consistent=true
+    tools: read_imagex16, send_messagex1
+    read_image: events=16 blocks=16 using=assistant message tool-call blocks
+    read dirs: {"naive":16,"down-only":0,"down-then-up":0,"other":0}
+    REAL=16  FABRICATED=0  distinct real tiles=16/16  repeat tile reads=0
+    ANSWER via send_message arguments.message + assistant text block; all carriers byte-identical=true
+    reported=36 abstain=2
+    codeAcc=35/36=0.9722  precision=35/36=0.9722
+    coverage<=60px=36/36  medianNearest=6.51px  strays=0
+    inRange=36/36 condCorrect=35 condAcc=0.9722 medCondDist=6.51 maxCondDist=43.99
+    sweep: 5:10 10:26 20:34 30:35 60:36 120:36 240:36
+
+--- 0ebbb2b2  0ebbb2b2-3752-4568-857e-54d78fa548b5
+    label="Read three-arm down-only"  model=doubao-seed-evolving  steps=12  frames=47 failed=0  badLines=0
+    snapshot: 87848 bytes, mtime=2026-09-29T12:10:20.434Z, sha256=234ed00ba0276f02...
+    PROMPT family=no-filename-list; arm in prompt=down-only; arm from read paths=down-only; consistent=true
+    tools: globx2, read_imagex16, send_messagex1
+    read_image: events=16 blocks=16 using=assistant message tool-call blocks
+    read dirs: {"naive":0,"down-only":16,"down-then-up":0,"other":0}
+    REAL=16  FABRICATED=0  distinct real tiles=16/16  repeat tile reads=0
+    ANSWER via send_message arguments.message + assistant text block; all carriers byte-identical=true
+    reported=34 abstain=2
+    codeAcc=14/36=0.3889  precision=14/34=0.4118
+    coverage<=60px=31/36  medianNearest=3.05px  strays=3
+    inRange=31/34 condCorrect=13 condAcc=0.4194 medCondDist=2.55 maxCondDist=11.58
+    sweep: 5:24 10:30 20:31 30:31 60:31 120:32 240:34
+
+--- 9a322102  9a322102-ee92-4b9e-8632-ebd28cc0bac4
+    label="Relaunch down-only"  model=doubao-seed-evolving  steps=18  frames=57 failed=0  badLines=0
+    snapshot: 79211 bytes, mtime=2026-09-29T12:13:34.150Z, sha256=613766d05ad42f75...
+    PROMPT family=explicit-16-filename-list; arm in prompt=down-only; arm from read paths=down-only; consistent=true
+    tools: read_imagex16, send_messagex1
+    read_image: events=16 blocks=16 using=assistant message tool-call blocks
+    read dirs: {"naive":0,"down-only":16,"down-then-up":0,"other":0}
+    REAL=16  FABRICATED=0  distinct real tiles=16/16  repeat tile reads=0
+    ANSWER via send_message arguments.message + assistant text block; all carriers byte-identical=true
+    reported=34 abstain=2
+    codeAcc=18/36=0.5000  precision=18/34=0.5294
+    coverage<=60px=34/36  medianNearest=3.69px  strays=0
+    inRange=34/34 condCorrect=18 condAcc=0.5294 medCondDist=3.46 maxCondDist=47.48
+    sweep: 5:22 10:32 20:32 30:33 60:34 120:34 240:34
+
+--- 63036c9a  63036c9a-ba2d-4411-932a-01e2cef38543
+    label="Rerun down-then-up with explicit filenames"  model=doubao-seed-evolving  steps=25  frames=78 failed=0  badLines=0
+    snapshot: 106084 bytes, mtime=2026-09-29T12:12:29.409Z, sha256=c0a47f849c775c96...
+    PROMPT family=explicit-16-filename-list; arm in prompt=down-then-up; arm from read paths=down-then-up; consistent=true
+    tools: read_imagex23, send_messagex1
+    read_image: events=23 blocks=23 using=assistant message tool-call blocks
+    read dirs: {"naive":0,"down-only":0,"down-then-up":23,"other":0}
+    REAL=23  FABRICATED=0  distinct real tiles=16/16  repeat tile reads=7
+    repeated real tile reads: L5_00_x0_y0_w960_h540.png x2, L5_01_x0_y540_w960_h540.png x2, L5_02_x960_y0_w960_h540.png x2, L5_03_x960_y540_w960_h540.png x2, L5_05_x0_y1620_w960_h540.png x2, L5_13_x1920_y1620_w960_h540.png x2, L5_15_x2880_y1620_w960_h540.png x2
+    ANSWER via send_message arguments.message + assistant text block; all carriers byte-identical=true
+    reported=32 abstain=5
+    codeAcc=8/36=0.2222  precision=8/32=0.2500
+    coverage<=60px=32/36  medianNearest=4.94px  strays=0
+    inRange=32/32 condCorrect=8 condAcc=0.2500 medCondDist=4.52 maxCondDist=8.79
+    sweep: 5:18 10:32 20:32 30:32 60:32 120:32 240:32
+
+--- e134da0e  e134da0e-76d2-4079-8c79-8af94966ccd7
+    label="Relaunch down-then-up"  model=doubao-seed-evolving  steps=6  frames=25 failed=0  badLines=0
+    snapshot: 69275 bytes, mtime=2026-09-29T12:13:56.643Z, sha256=33dcd60647f8c49f...
+    PROMPT family=explicit-16-filename-list; arm in prompt=down-then-up; arm from read paths=down-then-up; consistent=true
+    tools: read_imagex16, send_messagex1
+    read_image: events=16 blocks=16 using=assistant message tool-call blocks
+    read dirs: {"naive":0,"down-only":0,"down-then-up":16,"other":0}
+    REAL=16  FABRICATED=0  distinct real tiles=16/16  repeat tile reads=0
+    ANSWER via send_message arguments.message + assistant text block; all carriers byte-identical=true
+    reported=24 abstain=14
+    codeAcc=12/36=0.3333  precision=12/24=0.5000
+    coverage<=60px=24/36  medianNearest=5.85px  strays=0
+    inRange=24/24 condCorrect=12 condAcc=0.5000 medCondDist=4.05 maxCondDist=40.40
+    sweep: 5:15 10:22 20:23 30:23 60:24 120:24 240:24
+
+--- 5d09771c  5d09771c-3a37-4435-95b1-d6e469ae4f25
+    label="Read three-arm down-then-up"  model=doubao-seed-evolving  steps=9  frames=36 failed=0  badLines=0
+    snapshot: 101748 bytes, mtime=2026-09-29T12:13:15.322Z, sha256=9b163025870e140f...
+    PROMPT family=no-filename-list; arm in prompt=down-then-up; arm from read paths=down-then-up; consistent=true
+    tools: read_imagex40, globx1, send_messagex1
+    read_image: events=40 blocks=40 using=assistant message tool-call blocks
+    read dirs: {"naive":0,"down-only":0,"down-then-up":40,"other":0}
+    REAL=17  FABRICATED=23  distinct real tiles=16/16  repeat tile reads=0
+    REAL but not a tile: ["D:\\deepseek\\.tmp\\threearm\\runs\\down-then-up"]
+    fabricated paths: 23 calls, 23 distinct
+    ANSWER via send_message arguments.message + assistant text block; all carriers byte-identical=true
+    reported=34 abstain=2
+    codeAcc=13/36=0.3611  precision=13/34=0.3824
+    coverage<=60px=34/36  medianNearest=3.14px  strays=0
+    inRange=34/34 condCorrect=13 condAcc=0.3824 medCondDist=3.00 maxCondDist=6.88
+    sweep: 5:30 10:34 20:34 30:34 60:34 120:34 240:34
+
+--- a9cdcf16  a9cdcf16-df78-41dc-a7d8-875741ca46a2
+    label="Read three-arm naive"  model=doubao-seed-evolving  steps=86  frames=325 failed=0  badLines=0
+    snapshot: 258987 bytes, mtime=2026-09-29T12:27:20.522Z, sha256=3bc751fb9187c7a5...
+    PROMPT family=no-filename-list; arm in prompt=naive; arm from read paths=naive; consistent=true
+    tools: read_imagex502, send_messagex2, computer_waitx18
+    read_image: events=502 blocks=502 using=assistant message tool-call blocks
+    read dirs: {"naive":502,"down-only":0,"down-then-up":0,"other":0}
+    REAL=1  FABRICATED=501  distinct real tiles=0/16  repeat tile reads=0
+    REAL but not a tile: ["D:\\deepseek\\.tmp\\threearm\\runs\\naive"]
+    fabricated paths: 501 calls, 493 distinct
+    ANSWER: NONE. send_message present=true without OBSERVED lines=false
+    send_message text: "STILL BLOCKED (image-reader subagent): I've waited ~8 minutes and exhausted ~170 filename guesses (numeric 0/00/000/0000, words sub/tile/part/chunk/slice/block/piece/panel/frame/crop/image/img/pic/photo/shot/snap/screen/mockup/screenshot/arm/run/naive with _,-,. separators and row_col variants, .pn
+
+=== 3. HAND-COMPUTED WORKED EXAMPLE (session 0ebbb2b2) ===
+  line: "L5_00_x0_y0_w960_h540.png | KPQ | u=0.285 v=0.510"  tile gx=0 gy=0 gw=960 gh=540
+  hand gx = 0 + 0.285*960 = 273.6 ; script gx = 273.6
+  hand gy = 0 + 0.510*540 = 275.4 ; script gy = 275.4
+  nearest label K7Q at 154.4px -> outside gate -> stray; KPQ not a true code
+  session totals: reported=34 inRange=31 strays=3 coverage=31 hitCodes=14 condCorrect=13
+  hand recount from the printed per-row table: 34 rows, 31 within 60px, 13 of those with the matching code.
+
+=== 4. STATISTICS ===
+Normal-tail self-test (log-space Laplace continued fraction, modified Lentz) vs published values:
+  P(Z>1.959964) = 2.500000e-2  ref 2.499790e-2  rel.err 8.40e-5
+  P(Z>3) = 1.349898e-3  ref 1.349898e-3  rel.err 2.34e-8
+  P(Z>5) = 2.866516e-7  ref 2.866516e-7  rel.err -9.81e-8
+  P(Z>6) = 9.865876e-10  ref 9.865876e-10  rel.err 4.56e-8
+  P(Z>8) = 6.220961e-16  ref 6.220961e-16  rel.err -6.84e-8
+Fisher-exact self-test vs published tables:
+  tea-tasting 3/1/1/3: p = 4.857143e-1  ref 4.857140e-1  rel.err 5.88e-7
+  Fisher classic 1/9/11/3: p = 2.759456e-3  ref 2.759000e-3  rel.err 1.65e-4
+  perfect 10/0/0/10: p = 1.082509e-5  ref 1.082500e-5  rel.err 8.15e-6
+
+Pooled per arm (answering runs only):
+  naive         runs=1  pooled=35/36 = 0.9722  per-run: 0.9722
+  down-only     runs=2  pooled=32/72 = 0.4444  per-run: 0.3889, 0.5000
+  down-then-up  runs=3  pooled=33/108 = 0.3056  per-run: 0.2222, 0.3333, 0.3611
+
+  naive vs down-then-up: 35/36 (97.2%) vs 33/108 (30.6%)  pooled p=0.4722 SE=0.0961 delta=0.6667 z=6.939 p=3.951e-12 fisher log10p=-12.72
+  naive vs down-only: 35/36 (97.2%) vs 32/72 (44.4%)  pooled p=0.6204 SE=0.0991 delta=0.5278 z=5.328 p=9.939e-8 fisher log10p=-7.93
+  down-only vs down-then-up: 32/72 (44.4%) vs 33/108 (30.6%)  pooled p=0.3611 SE=0.0731 delta=0.1389 z=1.901 p=5.736e-2 fisher log10p=-1.09
+
+Run-level permutation (down-only vs down-then-up): |dmean|=0.1389 2/10 -> min two-sided p=0.200
+Design-based paired diffs: originals (no-filename-list prompt): 0ebbb2b2 38.9% vs 5d09771c 36.1% = 2.8 pts; relaunches (explicit-filename-list prompt): 9a322102 50.0% vs e134da0e 33.3% = 16.7 pts
+Sign test k=2 n=2 p=0.500
+McNemar 9a322102 vs e134da0e: both=8 onlyA=10 onlyB=4 neither=14 p=0.180
+Corrected zero-fabrication scope: down-only 32/72 vs down-then-up 20/72 z=2.082 p=0.0373
+Zero-fabrication qualifying runs: naive=[7ced3634] down-only=[0ebbb2b2,9a322102] down-then-up=[63036c9a,e134da0e]
+
+Abstention sensitivity (UNCERTAIN lines carrying a true 3-char code counted as OBSERVED):
+  7ced3634 naive         abstain= 2 codeAcc 0.9722 -> 0.9722  recovered=[]
+  0ebbb2b2 down-only     abstain= 2 codeAcc 0.3889 -> 0.3889  recovered=[]
+  9a322102 down-only     abstain= 2 codeAcc 0.5000 -> 0.5000  recovered=[]
+  63036c9a down-then-up  abstain= 5 codeAcc 0.2222 -> 0.2222  recovered=[]
+  e134da0e down-then-up  abstain=14 codeAcc 0.3333 -> 0.3333  recovered=[]
+  5d09771c down-then-up  abstain= 2 codeAcc 0.3611 -> 0.3611  recovered=[]
+  arm means: naive=0.9722  down-only=0.4444  down-then-up=0.3056
+
+Abstentions located within 2% of a tile edge (i.e. code likely cut by the split):
+  7ced3634 naive         UNCERTAIN= 2 at-edge=2
+  0ebbb2b2 down-only     UNCERTAIN= 2 at-edge=1
+  9a322102 down-only     UNCERTAIN= 2 at-edge=2
+  63036c9a down-then-up  UNCERTAIN= 5 at-edge=3
+  e134da0e down-then-up  UNCERTAIN=14 at-edge=6
+  5d09771c down-then-up  UNCERTAIN= 2 at-edge=2
+  TOTAL 16/27 = 0.593 of all abstentions are edge-split cases

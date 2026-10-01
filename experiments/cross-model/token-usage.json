@@ -1,0 +1,52 @@
+[
+  {
+    "run": "r1",
+    "scale": "1.000x (960)",
+    "calls": 6,
+    "input": 47220,
+    "output": 8420,
+    "reasoning": 5362,
+    "cacheRead": 159256,
+    "perStep": "s1:in20740/out175 s2:in6086/out981 s3:in6330/out461 s4:in5864/out218 s5:in5872/out5421 s6:in2328/out1164"
+  },
+  {
+    "run": "r2",
+    "scale": "1.633x (1568)",
+    "calls": 18,
+    "input": 73564,
+    "output": 4843,
+    "reasoning": 1822,
+    "cacheRead": 522424,
+    "perStep": "s1:in20740/out75 s2:in1905/out177 s3:in1829/out145 s4:in1750/out228 s5:in1708/out96 s6:in1616/out75 s7:in1520/out68 s8:in1933/out578 s9:in1939/out76 s10:in1842/out68 s11:in1743/out68 s12:in1644/out70 s13:in1546/out67 s14:in1445/out66 s15:in1856/out182 s16:in1804/out66 s17:in25255/out1630 s18:in1489/out1108"
+  },
+  {
+    "run": "r3",
+    "scale": "1.000x (960)",
+    "calls": 6,
+    "input": 46766,
+    "output": 7512,
+    "reasoning": 4515,
+    "cacheRead": 159256,
+    "perStep": "s1:in20740/out191 s2:in6102/out756 s3:in6267/out496 s4:in5787/out213 s5:in5805/out4713 s6:in2065/out1143"
+  },
+  {
+    "run": "r4",
+    "scale": "1.633x (1568)",
+    "calls": 6,
+    "input": 66293,
+    "output": 5180,
+    "reasoning": 2134,
+    "cacheRead": 138976,
+    "perStep": "s1:in20740/out185 s2:in26384/out591 s3:in6192/out194 s4:in5694/out183 s5:in5704/out2872 s6:in1579/out1155"
+  },
+  {
+    "run": "r5",
+    "scale": "3.000x (2880)",
+    "calls": 18,
+    "input": 51906,
+    "output": 5351,
+    "reasoning": 1002,
+    "cacheRead": 550072,
+    "perStep": "s1:in20740/out92 s2:in1957/out340 s3:in1956/out168 s4:in1928/out215 s5:in1888/out99 s6:in1835/out78 s7:in1771/out73 s8:in1707/out68 s9:in1642/out67 s10:in1577/out67 s11:in1512/out68 s12:in1960/out68 s13:in1896/out67 s14:in1831/out68 s15:in1767/out62 s16:in1699/out68 s17:in1635/out2511 s18:in2605/out1172"
+  }
+]

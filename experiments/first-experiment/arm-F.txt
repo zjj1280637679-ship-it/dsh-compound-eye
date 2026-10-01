@@ -1,0 +1,40 @@
+OBSERVED: L5_00_x0_y0_w960_h540.png | K7Q | u=0.281 v=0.221
+OBSERVED: L5_00_x0_y0_w960_h540.png | M3Z | u=0.949 v=0.345
+OBSERVED: L5_01_x0_y540_w960_h540.png | V8L | u=0.281 v=0.128
+OBSERVED: L5_01_x0_y540_w960_h540.png | T4B | u=0.212 v=0.697
+OBSERVED: L5_02_x960_y0_w960_h540.png | R9T | u=0.657 v=0.361
+OBSERVED: L5_02_x960_y0_w960_h540.png | F1S | u=0.548 v=0.918
+OBSERVED: L5_02_x960_y0_w960_h540.png | D5H | u=0.063 v=0.980
+OBSERVED: L5_03_x960_y540_w960_h540.png | N2J | u=0.553 v=0.676
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Y7F | u=0.297 v=0.221
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Q3G | u=0.939 v=0.473
+OBSERVED: L5_05_x0_y1620_w960_h540.png | D8K | u=0.445 v=0.090
+OBSERVED: L5_05_x0_y1620_w960_h540.png | X7N | u=0.224 v=0.557
+OBSERVED: L5_06_x960_y1080_w960_h540.png | W9C | u=0.717 v=0.290
+OBSERVED: L5_06_x960_y1080_w960_h540.png | P5R | u=0.057 v=0.954
+OBSERVED: L5_07_x960_y1620_w960_h540.png | Z2W | u=0.712 v=0.136
+OBSERVED: L5_07_x960_y1620_w960_h540.png | J4S | u=0.108 v=0.543
+OBSERVED: L5_07_x960_y1620_w960_h540.png | R1G | u=0.761 v=0.651
+OBSERVED: L5_08_x1920_y0_w960_h540.png | B4X | u=0.356 v=0.476
+OBSERVED: L5_08_x1920_y0_w960_h540.png | G7Y | u=0.384 v=0.853
+OBSERVED: L5_09_x1920_y540_w960_h540.png | L8P | u=0.293 v=0.528
+OBSERVED: L5_09_x1920_y540_w960_h540.png | H5V | u=0.975 v=0.804
+OBSERVED: L5_10_x2880_y0_w960_h540.png | J6W | u=0.033 v=0.251
+OBSERVED: L5_10_x2880_y0_w960_h540.png | P2N | u=0.671 v=0.331
+OBSERVED: L5_10_x2880_y0_w960_h540.png | C3K | u=0.046 v=0.854
+OBSERVED: L5_10_x2880_y0_w960_h540.png | Z9M | u=0.707 v=0.946
+OBSERVED: L5_11_x2880_y540_w960_h540.png | S1D | u=0.587 v=0.520
+OBSERVED: L5_12_x1920_y1080_w960_h540.png | A4T | u=0.429 v=0.328
+OBSERVED: L5_12_x1920_y1080_w960_h540.png | H9B | u=0.249 v=0.923
+OBSERVED: L5_13_x1920_y1620_w960_h540.png | V9D | u=0.226 v=0.605
+OBSERVED: L5_14_x2880_y1080_w960_h540.png | E6X | u=0.119 v=0.363
+OBSERVED: L5_14_x2880_y1080_w960_h540.png | U2N | u=0.778 v=0.470
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | T3L | u=0.676 v=0.100
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | Q6Y | u=0.059 v=0.731
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | B3C | u=0.559 v=0.783
+UNCERTAIN: L5_03_x960_y540_w960_h540.png | u=0.003 v=0.648 | left-edge fragment of a label centered on the x=960 seam, unreadable
+UNCERTAIN: L5_13_x1920_y1620_w960_h540.png | u=0.991 v=0.136 | right-edge fragment at the x=2880 seam, looks like "M6P" but truncated
+IMAGE_SIZES: full.png=3840x2160; L5_00_x0_y0_w960_h540.png=960x540; L5_01_x0_y540_w960_h540.png=960x540; L5_02_x960_y0_w960_h540.png=960x540; L5_03_x960_y540_w960_h540.png=960x540; L5_04_x0_y1080_w960_h540.png=960x540; L5_05_x0_y1620_w960_h540.png=960x540; L5_06_x960_y1080_w960_h540.png=960x540; L5_07_x960_y1620_w960_h540.png=960x540; L5_08_x1920_y0_w960_h540.png=960x540; L5_09_x1920_y540_w960_h540.png=960x540; L5_10_x2880_y0_w960_h540.png=960x540; L5_11_x2880_y540_w960_h540.png=960x540; L5_12_x1920_y1080_w960_h540.png=960x540; L5_13_x1920_y1620_w960_h540.png=960x540; L5_14_x2880_y1080_w960_h540.png=960x540; L5_15_x2880_y1620_w960_h540.png=960x540
+TOTAL_OBSERVED: 34
+
+NOTE: all 17 images were delivered at 1568x882 for viewing (16:9 preserved); u,v are normalized inside each delivered image. The full.png downscale was too small to read codes reliably, so every reported code comes from the tile where it was legible; a few full.png readings differed from the tile (e.g. tile says Z2W/B4X/L8P/D5H/F1S/C3K/Z9M/J6W/P2N, where the full view suggested Z2M/K4X/J8P/D9N/F53/C4K/2MQ/7BD/P2K) -- tiles are authoritative.

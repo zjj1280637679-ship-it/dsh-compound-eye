@@ -1,0 +1,75 @@
+{
+  "note": "arm identity derived from read_image paths, not from filenames (all three arms use identical filenames)",
+  "runs": [
+    {
+      "s": "7ced3634",
+      "arm": "naive",
+      "delivered": "960x540",
+      "info": 1,
+      "note": "16/16 real reads",
+      "source": "text",
+      "observed": 36,
+      "uncertain": 2
+    },
+    {
+      "s": "0ebbb2b2",
+      "arm": "down-only",
+      "delivered": "392x221",
+      "info": 0.408,
+      "note": "16/16 real reads",
+      "source": "text",
+      "observed": 34,
+      "uncertain": 2
+    },
+    {
+      "s": "9a322102",
+      "arm": "down-only",
+      "delivered": "392x221",
+      "info": 0.408,
+      "note": "16/16 real reads",
+      "source": "text",
+      "observed": 34,
+      "uncertain": 2
+    },
+    {
+      "s": "63036c9a",
+      "arm": "down-then-up",
+      "delivered": "1568x884",
+      "info": 0.408,
+      "note": "23 real reads, 16 unique tiles, no fabricated path",
+      "source": "text",
+      "observed": 32,
+      "uncertain": 5
+    },
+    {
+      "s": "e134da0e",
+      "arm": "down-then-up",
+      "delivered": "1568x884",
+      "info": 0.408,
+      "note": "16/16 real reads",
+      "source": "text",
+      "observed": 24,
+      "uncertain": 14
+    },
+    {
+      "s": "5d09771c",
+      "arm": "down-then-up",
+      "delivered": "1568x884",
+      "info": 0.408,
+      "note": "16/16 real reads + 23 reads of non-existent paths",
+      "source": "text",
+      "observed": 34,
+      "uncertain": 2
+    },
+    {
+      "s": "a9cdcf16",
+      "arm": "(abandoned)",
+      "delivered": null,
+      "info": null,
+      "note": "590 reads, 589 of non-existent paths, delivered TOTAL_OBSERVED: 0",
+      "source": "text",
+      "observed": 0,
+      "uncertain": 0
+    }
+  ]
+}

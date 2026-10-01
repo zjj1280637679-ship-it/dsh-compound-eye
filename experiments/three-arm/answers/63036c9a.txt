@@ -1,0 +1,38 @@
+OBSERVED: L5_00_x0_y0_w960_h540.png | K7G | u=0.284 v=0.226
+OBSERVED: L5_00_x0_y0_w960_h540.png | R8I | u=0.957 v=0.351
+OBSERVED: L5_01_x0_y540_w960_h540.png | V8L | u=0.284 v=0.135
+OBSERVED: L5_01_x0_y540_w960_h540.png | T48 | u=0.210 v=0.715
+OBSERVED: L5_02_x960_y0_w960_h540.png | B9T | u=0.657 v=0.361
+OBSERVED: L5_02_x960_y0_w960_h540.png | F25 | u=0.542 v=0.923
+OBSERVED: L5_02_x960_y0_w960_h540.png | D5H | u=0.064 v=0.980
+OBSERVED: L5_03_x960_y540_w960_h540.png | W2J | u=0.555 v=0.687
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Y7P | u=0.297 v=0.226
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Q36 | u=0.944 v=0.489
+OBSERVED: L5_05_x0_y1620_w960_h540.png | O4X | u=0.449 v=0.091
+OBSERVED: L5_06_x960_y1080_w960_h540.png | M4C | u=0.727 v=0.299
+OBSERVED: L5_06_x960_y1080_w960_h540.png | P5Q | u=0.064 v=0.962
+OBSERVED: L5_07_x960_y1620_w960_h540.png | Z2N | u=0.714 v=0.136
+OBSERVED: L5_07_x960_y1620_w960_h540.png | 34S | u=0.108 v=0.560
+OBSERVED: L5_07_x960_y1620_w960_h540.png | R26 | u=0.765 v=0.670
+OBSERVED: L5_08_x1920_y0_w960_h540.png | H4X | u=0.364 v=0.485
+OBSERVED: L5_08_x1920_y0_w960_h540.png | Q8Y | u=0.389 v=0.863
+OBSERVED: L5_09_x1920_y540_w960_h540.png | LAP | u=0.297 v=0.544
+OBSERVED: L5_09_x1920_y540_w960_h540.png | H5V | u=0.983 v=0.824
+OBSERVED: L5_10_x2880_y0_w960_h540.png | 34W | u=0.038 v=0.256
+OBSERVED: L5_10_x2880_y0_w960_h540.png | P2N | u=0.676 v=0.340
+OBSERVED: L5_10_x2880_y0_w960_h540.png | C3K | u=0.051 v=0.861
+OBSERVED: L5_10_x2880_y0_w960_h540.png | 29M | u=0.714 v=0.951
+OBSERVED: L5_11_x2880_y540_w960_h540.png | S1D | u=0.587 v=0.533
+OBSERVED: L5_12_x1920_y1080_w960_h540.png | J4T | u=0.434 v=0.330
+OBSERVED: L5_12_x1920_y1080_w960_h540.png | H4B | u=0.255 v=0.925
+OBSERVED: L5_13_x1920_y1620_w960_h540.png | V4D | u=0.236 v=0.614
+OBSERVED: L5_14_x2880_y1080_w960_h540.png | E6K | u=0.121 v=0.363
+OBSERVED: L5_14_x2880_y1080_w960_h540.png | U2N | u=0.778 v=0.472
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | T3L | u=0.682 v=0.107
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | 83C | u=0.561 v=0.782
+UNCERTAIN: L5_01_x0_y540_w960_h540.png | u=0.997 v=0.656 | 14K (right edge, code split between files 01/03, glyphs cut off)
+UNCERTAIN: L5_05_x0_y1620_w960_h540.png | u=0.227 v=0.564 | J7N (very blurry, indistinct characters)
+UNCERTAIN: L5_13_x1920_y1620_w960_h540.png | u=0.991 v=0.155 | P6X (cut at right outer edge, third character off-image)
+UNCERTAIN: L5_15_x2880_y1620_w960_h540.png | u=0.003 v=0.141 | unreadable (left outer edge, only a fragment of the first character visible)
+UNCERTAIN: L5_15_x2880_y1620_w960_h540.png | u=0.064 v=0.735 | Q7Y (blurry, matches Q8Y seen in L5_08 but too indistinct to confirm)
+TOTAL_OBSERVED: 32

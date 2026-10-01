@@ -1,0 +1,39 @@
+OBSERVED: L5_00_x0_y0_w960_h540.png | K79 | u=0.287 v=0.224
+UNCERTAIN: L5_00_x0_y0_w960_h540.png | u=0.952 v=0.346 | A8Z (blurry near right edge, third glyph ambiguous)
+OBSERVED: L5_01_x0_y540_w960_h540.png | V8L | u=0.283 v=0.131
+OBSERVED: L5_01_x0_y540_w960_h540.png | T48 | u=0.212 v=0.708
+UNCERTAIN: L5_01_x0_y540_w960_h540.png | u=0.996 v=0.656 | unreadable (only a sliver at right edge)
+OBSERVED: L5_02_x960_y0_w960_h540.png | B9T | u=0.665 v=0.362
+OBSERVED: L5_02_x960_y0_w960_h540.png | F25 | u=0.554 v=0.923
+UNCERTAIN: L5_02_x960_y0_w960_h540.png | u=0.067 v=0.991 | D5H (cut by bottom edge)
+UNCERTAIN: L5_03_x960_y540_w960_h540.png | u=0.006 v=0.661 | unreadable (sliver cut by left edge)
+UNCERTAIN: L5_03_x960_y540_w960_h540.png | u=0.560 v=0.681 | N2J (first glyph N/M ambiguous)
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Y7F | u=0.300 v=0.222
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Q36 | u=0.944 v=0.473
+UNCERTAIN: L5_05_x0_y1620_w960_h540.png | u=0.450 v=0.095 | D6X (third glyph X/K ambiguous)
+OBSERVED: L5_05_x0_y1620_w960_h540.png | X7N | u=0.230 v=0.634
+UNCERTAIN: L5_06_x960_y1080_w960_h540.png | u=0.724 v=0.298 | MMC (first two glyphs M/W indistinct)
+UNCERTAIN: L5_06_x960_y1080_w960_h540.png | u=0.063 v=0.959 | P58 (cut by bottom edge)
+OBSERVED: L5_07_x960_y1620_w960_h540.png | Z2N | u=0.708 v=0.139
+OBSERVED: L5_07_x960_y1620_w960_h540.png | 345 | u=0.112 v=0.548
+OBSERVED: L5_07_x960_y1620_w960_h540.png | 826 | u=0.765 v=0.673
+OBSERVED: L5_08_x1920_y0_w960_h540.png | B4X | u=0.360 v=0.481
+OBSERVED: L5_08_x1920_y0_w960_h540.png | Q7Y | u=0.386 v=0.854
+OBSERVED: L5_09_x1920_y540_w960_h540.png | L8P | u=0.300 v=0.526
+UNCERTAIN: L5_09_x1920_y540_w960_h540.png | u=0.992 v=0.817 | W3V (cut by right edge)
+OBSERVED: L5_10_x2880_y0_w960_h540.png | J6W | u=0.033 v=0.256
+OBSERVED: L5_10_x2880_y0_w960_h540.png | P2N | u=0.681 v=0.333
+OBSERVED: L5_10_x2880_y0_w960_h540.png | C3K | u=0.050 v=0.868
+UNCERTAIN: L5_10_x2880_y0_w960_h540.png | u=0.713 v=0.955 | ZMM (cut by bottom edge, last glyphs indistinct)
+OBSERVED: L5_11_x2880_y540_w960_h540.png | S1D | u=0.593 v=0.536
+OBSERVED: L5_12_x1920_y1080_w960_h540.png | M4T | u=0.434 v=0.334
+UNCERTAIN: L5_12_x1920_y1080_w960_h540.png | u=0.255 v=0.939 | H4B (cut by bottom edge)
+UNCERTAIN: L5_13_x1920_y1620_w960_h540.png | u=0.992 v=0.149 | P6J (cut by right edge)
+OBSERVED: L5_13_x1920_y1620_w960_h540.png | V4D | u=0.230 v=0.620
+UNCERTAIN: L5_14_x2880_y1080_w960_h540.png | u=0.118 v=0.376 | EGK (middle glyph G/6 ambiguous)
+OBSERVED: L5_14_x2880_y1080_w960_h540.png | V2N | u=0.775 v=0.475
+UNCERTAIN: L5_15_x2880_y1620_w960_h540.png | u=0.001 v=0.136 | unreadable (sliver cut by left edge)
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | T3L | u=0.679 v=0.111
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | Q6Y | u=0.059 v=0.744
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | B3C | u=0.566 v=0.805
+TOTAL_OBSERVED: 24

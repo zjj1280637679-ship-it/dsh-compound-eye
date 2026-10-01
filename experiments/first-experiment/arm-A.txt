@@ -1,0 +1,40 @@
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | 4V2 | u=0.070 v=0.050
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | P6C | u=0.242 v=0.084
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | 8E7 | u=0.411 v=0.084
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | P2N | u=0.916 v=0.084
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | DQI | u=0.261 v=0.238
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | F3Y | u=0.393 v=0.228
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | G77 | u=0.596 v=0.210
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | C4X | u=0.760 v=0.210
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | L6P | u=0.573 v=0.357
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | 9F7 | u=0.745 v=0.423
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | DSP | u=0.077 v=0.520
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | LHC | u=0.429 v=0.539
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | 4AT | u=0.605 v=0.543
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | EXA | u=0.780 v=0.552
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | 08A | u=0.112 v=0.729
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | P9A | u=0.262 v=0.697
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | 2ZM | u=0.430 v=0.739
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | EUB | u=0.564 v=0.690
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | P4F | u=0.751 v=0.739
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | VHO | u=0.562 v=0.855
+OBSERVED: D:\deepseek\.tmp\attn-exp\full\full.png | 5XQ | u=0.894 v=0.904
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.588 v=0.115 | 8A4
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.760 v=0.059 | 7J6
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.070 v=0.269 | WL (only 2 glyphs resolvable)
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.932 v=0.238 | 2W? (possibly truncated)
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.054 v=0.386 | 748
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.253 v=0.388 | 3AA
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.390 v=0.386 | N23
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.893 v=0.351 | FL9
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.075 v=0.516 | 377
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.943 v=0.581 | UW? (possibly truncated)
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.916 v=0.729 | TV? (possibly truncated)
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.061 v=0.842 | 2T5
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.278 v=0.839 | 2T5
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.439 v=0.873 | 9A6
+UNCERTAIN: D:\deepseek\.tmp\attn-exp\full\full.png | u=0.763 v=0.889 | QQ7
+IMAGE_SIZES: D:\deepseek\.tmp\attn-exp\full\full.png=1568x882
+TOTAL_OBSERVED: 21
+
+NOTE ON RELIABILITY: the source is a 3840x2160 capture delivered to me downscaled to 1568x882 (~2.45x reduction). Individual glyphs are ~5 px tall, so per-character confidence is low even for the OBSERVED set; expect character-level errors (especially digit/letter confusions like 0/O, 8/B, S/5, Z/2). Only read_image was used; no zoom/crop tool was permitted, so no higher-resolution look was possible.

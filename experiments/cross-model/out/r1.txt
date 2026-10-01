@@ -1,0 +1,39 @@
+OBSERVED: img01.png | K7Q | u=0.288 v=0.226
+OBSERVED: img01.png | M3Z | u=0.959 v=0.350
+OBSERVED: img02.png | V8L | u=0.281 v=0.131
+OBSERVED: img02.png | T4B | u=0.217 v=0.707
+OBSERVED: img03.png | R9T | u=0.664 v=0.365
+OBSERVED: img03.png | F1S | u=0.552 v=0.928
+OBSERVED: img03.png | D5H | u=0.066 v=0.993
+OBSERVED: img04.png | K6R | u=0.018 v=0.670
+OBSERVED: img04.png | M2J | u=0.559 v=0.683
+OBSERVED: img05.png | Y7F | u=0.302 v=0.226
+OBSERVED: img05.png | Q3G | u=0.944 v=0.480
+OBSERVED: img06.png | D8K | u=0.453 v=0.100
+OBSERVED: img06.png | X7N | u=0.230 v=0.570
+OBSERVED: img07.png | W9C | u=0.728 v=0.300
+OBSERVED: img07.png | P5R | u=0.059 v=0.970
+OBSERVED: img08.png | Z2W | u=0.716 v=0.141
+OBSERVED: img08.png | J4S | u=0.113 v=0.554
+OBSERVED: img08.png | R1G | u=0.766 v=0.665
+OBSERVED: img09.png | B4X | u=0.365 v=0.489
+OBSERVED: img09.png | G7Y | u=0.391 v=0.857
+OBSERVED: img10.png | L8P | u=0.302 v=0.541
+OBSERVED: img10.png | H5V | u=0.990 v=0.826
+OBSERVED: img11.png | J6W | u=0.039 v=0.257
+OBSERVED: img11.png | P2N | u=0.681 v=0.335
+OBSERVED: img11.png | C3K | u=0.051 v=0.867
+OBSERVED: img11.png | Z9M | u=0.719 v=0.954
+OBSERVED: img12.png | S1D | u=0.597 v=0.531
+OBSERVED: img13.png | A4T | u=0.443 v=0.331
+OBSERVED: img13.png | H9B | u=0.260 v=0.928
+OBSERVED: img14.png | V9D | u=0.232 v=0.620
+OBSERVED: img15.png | E6X | u=0.123 v=0.374
+OBSERVED: img15.png | U2N | u=0.779 v=0.443
+OBSERVED: img16.png | T3L | u=0.698 v=0.109
+OBSERVED: img16.png | Q6Y | u=0.061 v=0.744
+OBSERVED: img16.png | B3C | u=0.582 v=0.798
+UNCERTAIN: img02.png | u=0.999 v=0.661 | unreadable (only sliver resembling "X" at right edge, rest of code cut off)
+UNCERTAIN: img14.png | u=0.992 v=0.143 | M6F (M and 6 clear, third glyph consistent with F but clipped by right edge)
+UNCERTAIN: img16.png | u=0.000 v=0.244 | unreadable (tiny fragment on left edge, no glyph identifiable)
+TOTAL_OBSERVED: 35

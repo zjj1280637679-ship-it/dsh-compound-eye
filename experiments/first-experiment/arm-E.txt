@@ -1,0 +1,41 @@
+OBSERVED: L5_00_x0_y0_w960_h540.png | K7Q | u=0.285 v=0.220
+OBSERVED: L5_00_x0_y0_w960_h540.png | M3Z | u=0.952 v=0.348
+OBSERVED: L5_01_x0_y540_w960_h540.png | V8L | u=0.279 v=0.122
+OBSERVED: L5_01_x0_y540_w960_h540.png | T4B | u=0.207 v=0.694
+OBSERVED: L5_02_x960_y0_w960_h540.png | R9T | u=0.654 v=0.359
+OBSERVED: L5_02_x960_y0_w960_h540.png | F1S | u=0.543 v=0.919
+OBSERVED: L5_02_x960_y0_w960_h540.png | D5H | u=0.063 v=0.983
+OBSERVED: L5_03_x960_y540_w960_h540.png | N2J | u=0.555 v=0.680
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Y7F | u=0.296 v=0.220
+OBSERVED: L5_04_x0_y1080_w960_h540.png | Q3G | u=0.936 v=0.474
+OBSERVED: L5_05_x0_y1620_w960_h540.png | D8K | u=0.447 v=0.087
+OBSERVED: L5_05_x0_y1620_w960_h540.png | X7N | u=0.228 v=0.550
+OBSERVED: L5_06_x960_y1080_w960_h540.png | W9C | u=0.719 v=0.291
+OBSERVED: L5_06_x960_y1080_w960_h540.png | P5R | u=0.054 v=0.956
+OBSERVED: L5_07_x960_y1620_w960_h540.png | Z2N | u=0.706 v=0.135
+OBSERVED: L5_07_x960_y1620_w960_h540.png | 3JS | u=0.104 v=0.544
+OBSERVED: L5_07_x960_y1620_w960_h540.png | R1G | u=0.765 v=0.656
+OBSERVED: L5_08_x1920_y0_w960_h540.png | B4X | u=0.359 v=0.478
+OBSERVED: L5_08_x1920_y0_w960_h540.png | G7Y | u=0.385 v=0.850
+OBSERVED: L5_09_x1920_y540_w960_h540.png | L8P | u=0.299 v=0.530
+OBSERVED: L5_09_x1920_y540_w960_h540.png | H5V | u=0.977 v=0.806
+OBSERVED: L5_10_x2880_y0_w960_h540.png | J6W | u=0.032 v=0.250
+OBSERVED: L5_10_x2880_y0_w960_h540.png | P2N | u=0.672 v=0.331
+OBSERVED: L5_10_x2880_y0_w960_h540.png | C3K | u=0.047 v=0.857
+OBSERVED: L5_10_x2880_y0_w960_h540.png | Z9M | u=0.702 v=0.950
+OBSERVED: L5_11_x2880_y540_w960_h540.png | S1D | u=0.586 v=0.530
+OBSERVED: L5_12_x1920_y1080_w960_h540.png | A4T | u=0.430 v=0.330
+OBSERVED: L5_12_x1920_y1080_w960_h540.png | H9B | u=0.252 v=0.933
+OBSERVED: L5_13_x1920_y1620_w960_h540.png | V9D | u=0.228 v=0.611
+OBSERVED: L5_14_x2880_y1080_w960_h540.png | E6X | u=0.118 v=0.365
+OBSERVED: L5_14_x2880_y1080_w960_h540.png | U2N | u=0.776 v=0.469
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | T3L | u=0.674 v=0.098
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | Q5Y | u=0.057 v=0.731
+OBSERVED: L5_15_x2880_y1620_w960_h540.png | B3C | u=0.558 v=0.781
+UNCERTAIN: L5_01_x0_y540_w960_h540.png | u=1.000 v=0.652 | label cut by right edge (unreadable)
+UNCERTAIN: L5_03_x960_y540_w960_h540.png | u=0.000 v=0.652 | label cut by left edge ("..GR" visible)
+UNCERTAIN: L5_13_x1920_y1620_w960_h540.png | u=0.988 v=0.135 | label cut by right edge ("M6." visible)
+UNCERTAIN: L5_15_x2880_y1620_w960_h540.png | u=0.000 v=0.139 | label cut by left edge (unreadable)
+UNCERTAIN: full/full.png | u=0.000 v=0.000 | ~40 label blobs visible but ALL unreadable at delivered 1568x882
+IMAGE_SIZES: full/full.png=1568x882; L5_00..L5_15 (all 16 tiles)=960x540
+TOTAL_OBSERVED: 34
