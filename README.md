@@ -101,8 +101,45 @@ in behaviour, and the knobs compose:
 | Knob | What it controls | What it never controls |
 |---|---|---|
 | `depth`, or `rows`+`cols` | **how many pieces**: `2^depth` tiles split across both axes (on 16:9: 2×2 at 2, 4×4 at 4, 8×8 at 6 — the same ladder the L2..L5 materials used) | anything else. The fan-out you ask for is the fan-out you get |
-| `targets` | **where the cuts fall**: each cut is placed in the widest free gap between declared targets | the fan-out. A target that cannot be kept whole at your fineness is **named**, not fixed by lowering your fineness |
+| placement (automatic) | **where the cuts fall when you don't say**: the default looks at the pixels and puts each seam in the emptiest band near its even position | how many pieces. See below — you are not required to answer this question |
+| `placement: "even"` | the historical exact ladder, for byte-for-byte reproducible geometry | anything else |
+| `targets` | **where the cuts fall when you do say**: each cut is placed in the widest free gap between declared targets | the fan-out. A target that cannot be kept whole at your fineness is **named**, not fixed by lowering your fineness |
 | `tiles` | **extra regions**, ADDED to whatever the fan-out produced — "the 4×4 grid, plus a zoom on the toolbar" is one call | the fan-out. It does not replace the grid, and it is never rewritten |
+
+### You do not have to decide where to cut
+
+The caller always says *how many* pieces. Making them also say *where* would ask them to decide about pixels
+they have not measured — so the default is that the plugin looks, and drops each seam into the emptiest band
+near its even position. Measured on this repository's own materials (3840×2160, 36 labels, boxes 58×24,
+re-measured in CI by `experiments/seam-placement.mjs`):
+
+| depth | tiles | even ladder slices | default placement slices |
+|---|---|---|---|
+| 2 | 4 | 0/36 | **0/36** |
+| 3 | 8 | 3/36 | **0/36** |
+| 4 | 16 | **4/36** | **0/36** |
+| 5 | 32 | 4/36 | **0/36** |
+| 6 | 64 | 5/36 | **0/36** |
+
+A label a seam passes through is delivered in two images, and a model cannot join two images — measured
+earlier at 1 read in 11 runs across two models, with upscaling never helping. So this is the failure the
+default exists to avoid. `placement: "even"` remains for the case where you want the exact historical
+geometry; declared `targets` always take precedence over both.
+
+### Cuts are integers, and they are stated
+
+Every cut is a whole number in **source coordinates**, which makes a cut an *annotation*: something that can
+be written down, compared against a label's coordinates, diffed between two runs, and checked by a machine.
+So the result states them, and `report.cuts` carries them as data:
+
+```
+CUTS (integer source coordinates): x=829,1982,2789  y=657,1142,1518. Why they are stated: anything crossing
+one of these lines ends up in two images, and a model cannot join two images.
+```
+
+The same rule is applied to input: fractional rectangles and targets are rounded to whole pixels, and the
+rounding is **reported** in `report.adjusted` rather than done quietly, because a rounded crop is a different
+crop from the one that was asked for.
 
 An earlier design had three "modes" instead, and the target-aware one carried a self-imposed invariant —
 *never split a declared target* — that could **contradict the fan-out the caller asked for**. It resolved
@@ -214,6 +251,7 @@ Splits an image and returns the tiles as images.
 | `depth` | Number of splits; `2^depth` tiles. `0` = whole frame. **This is the model's knob** — the plugin never picks it. |
 | `rows` / `cols` | Explicit grid instead of `depth`. |
 | `targets` | Optional boxes that must stay whole in one tile. **Supply these whenever you know them** — this decides where the cuts fall, and nothing else. If your fan-out cannot honour one, it is named, not fixed by shrinking your fan-out. |
+| `placement` | `"content"` (default) or `"even"`. Only consulted when no `targets` are declared. |
 | `tiles` | Rectangles to ADD to the fan-out — they compose (grid + zoom regions in one call); on their own they ARE the layout. Described and reported, never rewritten. Partial and overlapping layouts are accepted and classified; only degenerate or fully off-frame rectangles are refused. |
 | `upscale` | `"native"` (default, never enlarges), a number, or `"max"`. |
 | `maxTiles` | Advisory threshold on images per call. Exceeding it does not trim or refuse: you get what you asked for, plus a note on the cost. |
@@ -240,17 +278,19 @@ reader that misreported the delivered size and still landed every point within 8
 
 ## What is verified, and what is not
 
-`node test/selftest.mjs` — **45 assertions** on the pure core: lossless PNG round-trip, refusal of
+`node test/selftest.mjs` — **54 assertions** on the pure core: lossless PNG round-trip, refusal of
 formats it does not implement, exact 1:1 crops, range preservation under area-average shrink, the
 interpolation signature under enlargement, and the planner (fan-out never reduced at any depth, no
 degenerate tiles, targets kept whole where the fineness allows and named where it does not, coverage
-classified, and grid-plus-rectangles composition).
+classified, grid-plus-rectangles composition, integer cuts and reported rounding, and content-aware
+placement beating the even ladder on a synthetic ink band).
 
-`node test/e2e-stub.mjs` — **46 assertions** on the full delivery path against a stub attachments
+`node test/e2e-stub.mjs` — **50 assertions** on the full delivery path against a stub attachments
 service (plan → resample → encode → persist → image block), including a continuity re-check against the
 real label boxes measured in the originating experiment, the separation of the three delivery states a
-caption can report (1:1 / forced down / enlarged), and the classification a set of rectangles gets
-(exact / complete-overlapping / partial, with named holes).
+caption can report (1:1 / forced down / enlarged), the classification a set of rectangles gets
+(exact / complete-overlapping / partial, with named holes), and the defaults at the tool boundary
+(content-aware placement, cuts stated as integer coordinates, `placement:"even"` on demand).
 
 `node --test test/package-manifest.test.mjs` — **4 assertions** locking the packaging contract that
 prevents the dual-package hazard.

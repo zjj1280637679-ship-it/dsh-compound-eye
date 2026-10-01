@@ -90,6 +90,23 @@ console.log('\n1) Full delivery path with a stub attachments service')
 
 console.log('\n2) native default vs upscale:"max" (the delivery-scale knob, observed at the tool boundary)')
 {
+  // The default placement looks at the picture, so the caller does not have to guess where to cut. This is
+  // asserted here at the tool boundary because it is a DEFAULT, not a computed value: a regression that
+  // silently went back to an even ladder would still pass every pure-planner test.
+  const storeD = stubAttachments()
+  const execD = createExecutor({ ctx: ctxFor(storeD), cfg: { deliveryMaxEdge: 1568, maxTiles: 64 } })
+  const dflt = await execD.run({ image: { path: SRC }, depth: 2 })
+  ok(dflt.report.placement === 'content', 'the default placement is content-aware, not an even ladder',
+    String(dflt.report.placement))
+  ok(/CUTS \(integer source coordinates\)/.test(dflt.result),
+    'and the cuts are stated as integer source coordinates, so a cut can be used as an annotation')
+  ok(dflt.report.cuts.length > 0 && dflt.report.cuts.every(c => Number.isInteger(c.at)),
+    'every stated cut is a whole pixel', JSON.stringify(dflt.report.cuts))
+  const evenRun = await execD.run({ image: { path: SRC }, depth: 2, placement: 'even' })
+  ok(evenRun.report.placement === 'even' && evenRun.tiles.every(t => t.source.w === 480 && t.source.h === 270),
+    'and placement:"even" gives back the exact historical ladder on demand',
+    evenRun.tiles.map(t => `${t.source.w}x${t.source.h}`).join(' '))
+
   const storeA = stubAttachments(), storeB = stubAttachments()
   const execA = createExecutor({ ctx: ctxFor(storeA), cfg: { deliveryMaxEdge: 1568, maxTiles: 64 } })
   const execB = createExecutor({ ctx: ctxFor(storeB), cfg: { deliveryMaxEdge: 1568, maxTiles: 64 } })

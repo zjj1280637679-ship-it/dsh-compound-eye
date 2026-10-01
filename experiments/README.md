@@ -8,6 +8,7 @@ stimuli, the readers' answers, the ground truth and the scoring code.
 
 ```
 truth.json                 36 ground-truth labels {code,x,y} + the 16 source rectangles used for reading
+seam-placement.mjs         does the default cut placement actually help? measures it on the materials above
 three-arm/                 the experiment that decided the plugin's default: cut native, or cut after downscaling
   stimuli/{naive,down-only,down-then-up}/   48 PNGs -- the actual images three readers were given
   answers/                 the final answer of each run, verbatim, plus registry.json (which run is which arm)
@@ -28,6 +29,17 @@ It needs nothing but this repository: `truth.json`, `answers/*.txt`, `answers/re
 It prints the per-run table and the three statistical framings, and its output **matches the published
 table figure for figure** — including the corrected conditional-read rate of 13/31 = 41.9% for
 `0ebbb2b2`, which an earlier version of the report got wrong.
+
+## Checking the placement claim
+
+```bash
+node experiments/seam-placement.mjs --check
+```
+
+The plugin's default puts each seam in the emptiest band near its even position. That is a measurement, not
+a preference, so it is re-measured against these materials: the frame is stitched back from the 16 native
+tiles, label boxes are 58×24, and the check fails if the default ever slices a label at depths 3–6 **or** if
+the even ladder stops slicing any (which would mean the comparison had stopped being exercised). CI runs it.
 
 ## Two things verified rather than assumed
 

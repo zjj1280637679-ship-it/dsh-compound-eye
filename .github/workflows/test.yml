@@ -44,3 +44,7 @@ jobs:
         run: node experiments/three-arm/rescore.mjs --check
       - name: the two L5 stimulus sets are the same image
         run: node experiments/three-arm/as-run/compare-stimuli.mjs
+      # The placement claim in the README ("the default cuts where the picture is empty") is a measurement,
+      # so it is re-measured here against the same materials rather than trusted.
+      - name: the default placement still avoids slicing labels
+        run: node experiments/seam-placement.mjs --check

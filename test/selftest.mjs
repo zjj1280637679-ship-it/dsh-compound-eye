@@ -220,6 +220,41 @@ console.log('4) One planner, orthogonal knobs: fan-out | targets (placement) | r
     'with the overlap measured rather than forbidden (the zoom region is inside a grid tile)',
     `${composed.report.coverage.mode} overlap=${composed.report.coverage.overlapPx}`)
 
+  // ---- a cut is an annotation, so it has to be an exact integer in source coordinates ----
+  const fractions = planGrid(V, 2, [], { tiles: [{ x: 10.4, y: 20.6, w: 99.7, h: 50.2 }, { x: 110.1, y: 20.6, w: 90.4, h: 50.2 }] })
+  ok(fractions.tiles.every(t => [t.x, t.y, t.w, t.h].every(Number.isInteger)),
+    'fractional caller rectangles are rounded to whole pixels',
+    JSON.stringify(fractions.tiles.map(t => [t.x, t.y, t.w, t.h])))
+  ok(fractions.report.adjusted.length === 2 && fractions.report.adjusted[0].kind === 'rectangle',
+    'and the rounding is REPORTED, not done quietly (a rounded crop is a different crop)',
+    JSON.stringify(fractions.report.adjusted))
+  const fractionalTarget = planGrid(V, 2, [{ x: 100.5, y: 200.5, w: 30.4, h: 10.6, label: 't' }])
+  ok(fractionalTarget.report.adjusted.some(a => a.kind === 'target'),
+    'declared targets are rounded the same way, so straddle detection and labels share one integer grid')
+
+  // ---- the default placement looks at the picture; "even" keeps the historical ladder ----
+  const ink = { col: new Float64Array(V.width), row: new Float64Array(V.height) }
+  for (let x = 900; x < 1020; x++) ink.col[x] = 5000        // a band of ink sitting on the even cut at 960
+  const content = planGrid(V, 4, [], { seamProfile: ink })   // depth 4 -> cuts at x=960,1920,2880
+  const even = planGrid(V, 4, [], { seamProfile: ink, placement: 'even' })
+  const cutX = g => [...new Set(g.tiles.map(t => t.x))].sort((a, b) => a - b)
+  ok(even.report.placement === 'even' && cutX(even).join(',') === '0,960,1920,2880',
+    'placement "even" reproduces the exact historical ladder', cutX(even).join(','))
+  ok(content.report.placement === 'content' && !cutX(content).includes(960),
+    'the default moves the cut off the ink band instead of through it', cutX(content).join(','))
+  ok(content.report.seamInk.chosen < content.report.seamInk.even,
+    'and reports how much seam contrast it avoided, so the caller can see the gain',
+    JSON.stringify(content.report.seamInk))
+  ok(content.tiles.every(t => Number.isInteger(t.x) && Number.isInteger(t.y) && Number.isInteger(t.w) && Number.isInteger(t.h)),
+    'content-aware cuts are integers too -- a cut has to be nameable to be an annotation')
+  ok(content.report.cuts.every(c => Number.isInteger(c.at)) && content.report.cuts.length > 0,
+    'and the cuts come back as an explicit list of integer source coordinates',
+    JSON.stringify(content.report.cuts))
+  const spread = content.tiles.map(t => t.w)
+  ok(Math.max(...spread) - Math.min(...spread) < 0.4 * (V.width / 4),
+    'while tiles stay close to even (dodging content, not building a ragged layout)',
+    `widths ${Math.min(...spread)}..${Math.max(...spread)}`)
+
 
   // Coverage is DESCRIBED, not forbidden. A caller may deliberately deliver a subset ("zoom into the
   // three regions I care about") or deliberately overlap ("keep this target whole across a seam").
