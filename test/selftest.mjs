@@ -255,6 +255,41 @@ console.log('4) One planner, orthogonal knobs: fan-out | targets (placement) | r
     'while tiles stay close to even (dodging content, not building a ragged layout)',
     `widths ${Math.min(...spread)}..${Math.max(...spread)}`)
 
+  // ---- overlap: the OTHER way to keep content whole, not an alternative to placement ----
+  const plain = planGrid(V, 4, [])
+  const overlapped = planGrid(V, 4, [], { overlap: 0.15 })
+  ok(overlapped.tiles.length === plain.tiles.length && overlapped.tiles.every(t =>
+    t.x <= 0 || t.y <= 0 || t.w >= 0),
+    'overlap does not change the fan-out, it grows the tiles', `${overlapped.tiles.length} tiles`)
+  const grew = overlapped.tiles.filter((t, i) => t.w > plain.tiles[i].w || t.h > plain.tiles[i].h).length
+  ok(grew === overlapped.tiles.length,
+    'and every tile is bigger than its un-overlapped self (clamping at the frame edge still leaves the other half)',
+    `${grew}/${overlapped.tiles.length} grew`)
+  ok(overlapped.report.coverage.mode === 'complete-overlapping' && overlapped.report.coverage.overlapPx > 0,
+    'the overlap is measured, which is also what makes it visible to the caller',
+    `${overlapped.report.coverage.mode} overlap=${overlapped.report.coverage.overlapPx}`)
+  ok(overlapped.report.overlap === 0.15 && overlapped.tiles.every(t => [t.x, t.y, t.w, t.h].every(Number.isInteger)),
+    'the fraction is echoed back and grown tiles are still whole pixels')
+  const single = planGrid(V, 4, [], { overlap: 0 })
+  ok(single.report.coverage.mode === 'exact', 'and overlap 0 is the plain partition, not an overlap of 0%',
+    single.report.coverage.mode)
+
+  // ---- targets and content are two kinds of evidence for the same objective, so they are scored together ----
+  const ink2 = { col: new Float64Array(V.width), row: new Float64Array(V.height) }
+  for (let x = 940; x < 1000; x++) ink2.col[x] = 5000       // ink exactly where the even x-cut would fall
+  const coop = planGrid(V, 4, [straddle], { seamProfile: ink2 })
+  ok(coop.report.candidates.length === 3,
+    'with both a declared target and a picture to look at, all three placements are considered',
+    coop.report.candidates.map(c => c.placement).join(','))
+  ok(coop.report.candidates.some(c => c.notWhole > 0),
+    'and at least one of them does leave the target cut, so the comparison is actually being exercised',
+    JSON.stringify(coop.report.candidates))
+  ok(coop.report.straddling.length === 0,
+    'the winner keeps the declared target whole -- declaring a target is not worse than not declaring it',
+    `placement=${coop.report.placement} straddling=${coop.report.straddling.join(',')}`)
+  ok(coop.report.placement === 'targets' || coop.report.placement === 'content',
+    'and the winner is named rather than left implicit', coop.report.placement)
+
 
   // Coverage is DESCRIBED, not forbidden. A caller may deliberately deliver a subset ("zoom into the
   // three regions I care about") or deliberately overlap ("keep this target whole across a seam").

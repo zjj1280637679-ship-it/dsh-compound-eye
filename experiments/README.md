@@ -36,10 +36,12 @@ table figure for figure** — including the corrected conditional-read rate of 1
 node experiments/seam-placement.mjs --check
 ```
 
-The plugin's default puts each seam in the emptiest band near its even position. That is a measurement, not
-a preference, so it is re-measured against these materials: the frame is stitched back from the 16 native
-tiles, label boxes are 58×24, and the check fails if the default ever slices a label at depths 3–6 **or** if
-the even ladder stops slicing any (which would mean the comparison had stopped being exercised). CI runs it.
+There are two ways to stop a seam from destroying content — place it where the picture is empty, or overlap
+the tiles so a sliced glyph is whole in a neighbour — and they fail differently, so the plugin exposes both.
+This script measures them against these materials and against the regime where placement cannot help (a
+uniform seam profile, standing in for a text-dense frame). The check fails if the default ever *loses* a
+label at depths 3–6, if the even ladder stops losing any (the comparison would no longer be exercised), if
+overlap stops costing pixels, or if placement ever beats overlap in the no-clean-line regime. CI runs it.
 
 ## Two things verified rather than assumed
 

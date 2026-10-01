@@ -104,7 +104,48 @@ in behaviour, and the knobs compose:
 | placement (automatic) | **where the cuts fall when you don't say**: the default looks at the pixels and puts each seam in the emptiest band near its even position | how many pieces. See below — you are not required to answer this question |
 | `placement: "even"` | the historical exact ladder, for byte-for-byte reproducible geometry | anything else |
 | `targets` | **where the cuts fall when you do say**: each cut is placed in the widest free gap between declared targets | the fan-out. A target that cannot be kept whole at your fineness is **named**, not fixed by lowering your fineness |
+| `overlap` | **grow every tile** by this fraction of its own size so neighbours overlap (0.15 = 15%) | the fan-out, and it is not an alternative to placement — it applies to whatever layout came out |
 | `tiles` | **extra regions**, ADDED to whatever the fan-out produced — "the 4×4 grid, plus a zoom on the toolbar" is one call | the fan-out. It does not replace the grid, and it is never rewritten |
+
+### Two ways to keep content whole, and neither one dominates
+
+A seam passing through a glyph delivers it in two images, and a model cannot join two images. There are two
+ways to prevent that, and they fail differently — so both are parameters, and they compose:
+
+1. **Place the seam where the picture is empty** (the default, `placement`). Costs nothing in pixels, but it
+   needs a clean line to *exist* near the even position. On a text-dense frame there is no such line.
+2. **Overlap the tiles** (`overlap`). Needs no clean line at all: anything on a seam is whole in at least one
+   neighbour. Costs delivered pixels, and can push a grown tile past the delivery ceiling, where that tile
+   gets downscaled.
+
+Measured on this repository's materials (3840×2160, 36 labels, boxes 58×24; re-measured in CI by
+`experiments/seam-placement.mjs`) — each cell is *labels a seam passes through / labels no tile contains*:
+
+| depth | tiles | even ladder | content placement | even + 15% overlap |
+|---|---|---|---|---|
+| 3 | 8 | 3/3 | **0/0** | **0/0** |
+| 4 | 16 | 4/4 | **0/0** | **0/0** |
+| 5 | 32 | 4/4 | **0/0** | **0/0** |
+| 6 | 64 | 5/5 | **0/0** | **0/0** |
+
+At depth 4 the delivered pixels are: even 8.29 M · **content 8.29 M (+0%)** · even+overlap 10.28 M (+24%).
+These materials are sparse enough that a clean line always exists, so placement wins on cost here.
+
+Then the regime where it does not — a frame with **no** clean line anywhere (a uniform seam profile, i.e. a
+stand-in for "my screenshot is text everywhere"):
+
+| depth | tiles | content placement | content + 15% overlap | overlap cost |
+|---|---|---|---|---|
+| 3 | 8 | 3/36 lost | **0/36 lost** | +20% pixels |
+| 4 | 16 | 4/36 lost | **0/36 lost** | +24% pixels |
+| 6 | 64 | 5/36 lost | **0/36 lost** | +28% pixels |
+
+⇒ With a clean line available, place the seam. With none, overlap is the only thing that saves the labels.
+The plugin does not decide this for you: `placement` defaults to content-aware because it is free when it
+works, and `overlap` is there for when it doesn't. They can be used together. Declared `targets` are not
+suppressed by either — targets and content are two kinds of evidence for the same objective (do not cut
+through things), so all candidate placements are scored on *targets left not-whole first, then seam contrast*,
+and the winner is named in `report.candidates`.
 
 ### You do not have to decide where to cut
 
@@ -251,7 +292,8 @@ Splits an image and returns the tiles as images.
 | `depth` | Number of splits; `2^depth` tiles. `0` = whole frame. **This is the model's knob** — the plugin never picks it. |
 | `rows` / `cols` | Explicit grid instead of `depth`. |
 | `targets` | Optional boxes that must stay whole in one tile. **Supply these whenever you know them** — this decides where the cuts fall, and nothing else. If your fan-out cannot honour one, it is named, not fixed by shrinking your fan-out. |
-| `placement` | `"content"` (default) or `"even"`. Only consulted when no `targets` are declared. |
+| `placement` | `"content"` (default) or `"even"`. Judged together with `targets`, never suppressing them. |
+| `overlap` | Grow every tile by this fraction so neighbours overlap, e.g. `0.15`. The other way to keep content whole; applies to any layout and composes with everything above. |
 | `tiles` | Rectangles to ADD to the fan-out — they compose (grid + zoom regions in one call); on their own they ARE the layout. Described and reported, never rewritten. Partial and overlapping layouts are accepted and classified; only degenerate or fully off-frame rectangles are refused. |
 | `upscale` | `"native"` (default, never enlarges), a number, or `"max"`. |
 | `maxTiles` | Advisory threshold on images per call. Exceeding it does not trim or refuse: you get what you asked for, plus a note on the cost. |
@@ -278,12 +320,13 @@ reader that misreported the delivered size and still landed every point within 8
 
 ## What is verified, and what is not
 
-`node test/selftest.mjs` — **54 assertions** on the pure core: lossless PNG round-trip, refusal of
+`node test/selftest.mjs` — **63 assertions** on the pure core: lossless PNG round-trip, refusal of
 formats it does not implement, exact 1:1 crops, range preservation under area-average shrink, the
 interpolation signature under enlargement, and the planner (fan-out never reduced at any depth, no
 degenerate tiles, targets kept whole where the fineness allows and named where it does not, coverage
-classified, grid-plus-rectangles composition, integer cuts and reported rounding, and content-aware
-placement beating the even ladder on a synthetic ink band).
+classified, grid-plus-rectangles composition, integer cuts and reported rounding, content-aware placement
+beating the even ladder on a synthetic ink band, overlap growing every tile and being measured, and
+targets-plus-content scored together rather than one suppressing the other).
 
 `node test/e2e-stub.mjs` — **50 assertions** on the full delivery path against a stub attachments
 service (plan → resample → encode → persist → image block), including a continuity re-check against the
