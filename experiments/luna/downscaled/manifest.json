@@ -1,0 +1,24 @@
+{
+  "arm": "downscaled",
+  "source": {
+    "w": 3840,
+    "h": 2160
+  },
+  "images": [
+    {
+      "path": "tile_r1c1_x0_y0_w3840_h2160.png",
+      "source": {
+        "x": 0,
+        "y": 0,
+        "w": 3840,
+        "h": 2160
+      },
+      "delivered": {
+        "w": 1568,
+        "h": 882,
+        "scale": 0.4083333333333333
+      },
+      "caption": "[tile_r1c1_x0_y0_w3840_h2160.png] source x=0 y=0 w=3840 h=2160 | delivered 1568x882 (0.408x of source px, forced by the 1568px delivery ceiling) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    }
+  ]
+}

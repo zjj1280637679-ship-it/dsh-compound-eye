@@ -8,6 +8,11 @@ It is an **image processor**. It does not click, does not drive the desktop, doe
 screen, and registers **no computer-use provider** — so it can be mounted beside any computer-use
 plugin, including the one that already owns the exclusive registry slot.
 
+Use it on demand when a large screenshot loses readable text or tiny geometry. In the
+[Luna localization pilot](experiments/luna/README.zh.md), ordinary buttons were hit 8/8 with every
+delivery; tiny edges were hit 7/8 from the native full frame, 0/8 after downscaling, and 7/8 from native
+tiles. Tiling recovered lost detail but did not beat native whole-frame hit rate in that single run.
+
 ```
 AI: compound_eye(image={path:"shot.png"}, depth=4, targets=[{x:960,y:540,w:80,h:24,label:"save"}])
      -> 16 images, cuts placed to avoid the declared target
@@ -234,7 +239,7 @@ There is nothing to tune by feel — the depth is set by what must stay readable
 
 | Want | Do |
 |---|---|
-| an object must be whole in one image | declare it in `targets`; the planner refuses to cut through it |
+| an object must be whole in one image | declare it in `targets`; the planner tries to keep it whole and reports any target the chosen layout does not protect |
 | an object must be *readable* | deep enough that the tile is at native scale (a tile near the frame's own size gains nothing) |
 | finer localization | **not** a reason to go deeper — see below |
 
@@ -257,8 +262,8 @@ steps:
 cumulative input ≈ N·B + δ·N(N-1)/2
 ```
 
-Step count sits in the **quadratic** term; per-call data volume sits in the **linear** one. Measured from
-the experiment that produced this plugin (same 16 images, different delivery shapes):
+Under this full-history model, step count sits in the **quadratic** term. The following are modeled
+using measured token parameters for the same 16 images, not a controlled trial of delivery shapes:
 
 | Delivery | cumulative inputTokens | relative |
 |---|---|---|
@@ -274,7 +279,8 @@ And the comparison that decides design questions:
 | depth 5 (32 images, **1 call**) | 75,140 (1.57×) |
 | depth 4 **plus one more step** | 99,880 (2.08×) |
 
-**Doubling the tiles is cheaper than adding a step.** So:
+**In this model, doubling the tiles is cheaper than adding a step.** Actual billed cost also depends on
+caching and the host's context handling; the Luna pilot did not measure cost. So:
 
 - **This plugin returns all tiles from one call, by design.** Never make the caller loop to fetch tiles
   one at a time; that is the 21× case.
@@ -299,9 +305,10 @@ Splits an image and returns the tiles as images.
 | `maxTiles` | Advisory threshold on images per call. Exceeding it does not trim or refuse: you get what you asked for, plus a note on the cost. |
 
 ### `compound_eye_probe`
-Same planning, **no images returned**: tile rectangles, delivery sizes, and whether any declared target
-would straddle a cut. Zero image cost. Use it when unsure how deep to split, or to confirm continuity
-before spending a call that returns pictures. It persists nothing.
+Same parameters and planning, **no images returned**: effective source rectangles, delivery sizes, and
+whether any declared target is missing from every whole tile. It accepts the same full PNG as delivery;
+content-aware placement needs decoded pixels, not only a header. Zero image cost. Use it when unsure how
+deep to split, or to confirm continuity before spending a call that returns pictures. It persists nothing.
 
 ### The coordinate contract
 
@@ -311,6 +318,12 @@ maps back with:
 ```
 global = (source.x + u * source.w, source.y + v * source.h)
 ```
+
+For a rectangle extending outside the image, `source`, filename, caption, and delivery size all describe
+the effective clipped region. The original requested rectangle remains in `report.clipped`. Numeric
+`upscale` and `"max"` both respect `deliveryMaxEdge`; enlargement never bypasses the configured ceiling.
+Target protection is checked against every effective delivered region, including overlap and extra
+rectangles. A failed heuristic search reports the chosen layout's missing targets, not global impossibility.
 
 Normalization is **size-independent on purpose**: a reader that has the wrong idea about how large the
 delivered image is still maps correctly. That is not a theory — it is the measured behaviour of a
@@ -338,6 +351,14 @@ caption can report (1:1 / forced down / enlarged), the classification a set of r
 `node --test test/package-manifest.test.mjs` — **4 assertions** locking the packaging contract that
 prevents the dual-package hazard.
 
+`node --test test/image-regression.test.mjs test/grid-regression.test.mjs` — **14 portable tests** for
+all four clipped edges and coordinate mappings, the delivery ceiling and probe parity, weighted-area
+shrinking, crop-boundary interpolation, invalid-layout atomicity, overlapping/extra target protection,
+the target-search axis fallback, and actual partition shape reporting. These tests need neither a host
+nor the external screenshot archive. `report.rows/cols` describe an actual Cartesian grid; for a
+non-Cartesian partition they are null and `report.shape` is `"partition"`. The original requested shape
+remains in `report.nominalRows/nominalCols`.
+
 **Not yet verified, stated plainly:**
 
 - **The three-arm numbers were not produced by this plugin.** They come from a script that reproduced
@@ -346,12 +367,13 @@ prevents the dual-package hazard.
   that experiment — the two are *isomorphic*, not identical.
 - **No end-to-end run inside a live host.** The tools have not been mounted and called through the
   attachments service in a real session. Everything above runs against a stub.
-- **Coordinates have not been round-tripped through a real delivery.** The mapping arithmetic is
-  tested; the full loop (plugin → host → model → normalized report → mapped back) has not.
+- **The live host coordinate loop remains unverified.** The Luna pilot round-tripped PNGs from the
+  real executor through a file-image tool and normalized reports; live host attachments, desktop
+  DPI/window mapping, and actual clicks have not been tested.
 - **The clipping threshold is not calibrated against this planner.** The measured 19.4% of labels whose
   ink crosses a tile seam (5.6% never fully delivered) came from a **geometric** grid. This planner's
   target-aware cuts should reduce that, and the reduction has not been measured.
-- **The figures in this README come from two models and one synthetic capture.** The sample is small
+- **The historical figures come from two models and one synthetic capture.** The sample is small
   (`n=36`, 1 SE ≈ 6.7 points) and the effect sizes for upscaling are within noise on the second model.
   They are quoted as measurements with their conditions, not as general laws.
 
