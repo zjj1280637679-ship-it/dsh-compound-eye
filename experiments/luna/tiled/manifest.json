@@ -1,0 +1,249 @@
+{
+  "arm": "tiled",
+  "source": {
+    "w": 3840,
+    "h": 2160
+  },
+  "images": [
+    {
+      "path": "tile_r1c1_x0_y0_w748_h664.png",
+      "source": {
+        "x": 0,
+        "y": 0,
+        "w": 748,
+        "h": 664
+      },
+      "delivered": {
+        "w": 748,
+        "h": 664,
+        "scale": 1
+      },
+      "caption": "[tile_r1c1_x0_y0_w748_h664.png] source x=0 y=0 w=748 h=664 | delivered 748x664 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r1c2_x748_y0_w1183_h664.png",
+      "source": {
+        "x": 748,
+        "y": 0,
+        "w": 1183,
+        "h": 664
+      },
+      "delivered": {
+        "w": 1183,
+        "h": 664,
+        "scale": 1
+      },
+      "caption": "[tile_r1c2_x748_y0_w1183_h664.png] source x=748 y=0 w=1183 h=664 | delivered 1183x664 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r1c3_x1931_y0_w725_h664.png",
+      "source": {
+        "x": 1931,
+        "y": 0,
+        "w": 725,
+        "h": 664
+      },
+      "delivered": {
+        "w": 725,
+        "h": 664,
+        "scale": 1
+      },
+      "caption": "[tile_r1c3_x1931_y0_w725_h664.png] source x=1931 y=0 w=725 h=664 | delivered 725x664 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r1c4_x2656_y0_w1184_h664.png",
+      "source": {
+        "x": 2656,
+        "y": 0,
+        "w": 1184,
+        "h": 664
+      },
+      "delivered": {
+        "w": 1184,
+        "h": 664,
+        "scale": 1
+      },
+      "caption": "[tile_r1c4_x2656_y0_w1184_h664.png] source x=2656 y=0 w=1184 h=664 | delivered 1184x664 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r2c1_x0_y664_w748_h420.png",
+      "source": {
+        "x": 0,
+        "y": 664,
+        "w": 748,
+        "h": 420
+      },
+      "delivered": {
+        "w": 748,
+        "h": 420,
+        "scale": 1
+      },
+      "caption": "[tile_r2c1_x0_y664_w748_h420.png] source x=0 y=664 w=748 h=420 | delivered 748x420 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r2c2_x748_y664_w1183_h420.png",
+      "source": {
+        "x": 748,
+        "y": 664,
+        "w": 1183,
+        "h": 420
+      },
+      "delivered": {
+        "w": 1183,
+        "h": 420,
+        "scale": 1
+      },
+      "caption": "[tile_r2c2_x748_y664_w1183_h420.png] source x=748 y=664 w=1183 h=420 | delivered 1183x420 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r2c3_x1931_y664_w725_h420.png",
+      "source": {
+        "x": 1931,
+        "y": 664,
+        "w": 725,
+        "h": 420
+      },
+      "delivered": {
+        "w": 725,
+        "h": 420,
+        "scale": 1
+      },
+      "caption": "[tile_r2c3_x1931_y664_w725_h420.png] source x=1931 y=664 w=725 h=420 | delivered 725x420 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r2c4_x2656_y664_w1184_h420.png",
+      "source": {
+        "x": 2656,
+        "y": 664,
+        "w": 1184,
+        "h": 420
+      },
+      "delivered": {
+        "w": 1184,
+        "h": 420,
+        "scale": 1
+      },
+      "caption": "[tile_r2c4_x2656_y664_w1184_h420.png] source x=2656 y=664 w=1184 h=420 | delivered 1184x420 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r3c1_x0_y1084_w748_h671.png",
+      "source": {
+        "x": 0,
+        "y": 1084,
+        "w": 748,
+        "h": 671
+      },
+      "delivered": {
+        "w": 748,
+        "h": 671,
+        "scale": 1
+      },
+      "caption": "[tile_r3c1_x0_y1084_w748_h671.png] source x=0 y=1084 w=748 h=671 | delivered 748x671 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r3c2_x748_y1084_w1183_h671.png",
+      "source": {
+        "x": 748,
+        "y": 1084,
+        "w": 1183,
+        "h": 671
+      },
+      "delivered": {
+        "w": 1183,
+        "h": 671,
+        "scale": 1
+      },
+      "caption": "[tile_r3c2_x748_y1084_w1183_h671.png] source x=748 y=1084 w=1183 h=671 | delivered 1183x671 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r3c3_x1931_y1084_w725_h671.png",
+      "source": {
+        "x": 1931,
+        "y": 1084,
+        "w": 725,
+        "h": 671
+      },
+      "delivered": {
+        "w": 725,
+        "h": 671,
+        "scale": 1
+      },
+      "caption": "[tile_r3c3_x1931_y1084_w725_h671.png] source x=1931 y=1084 w=725 h=671 | delivered 725x671 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r3c4_x2656_y1084_w1184_h671.png",
+      "source": {
+        "x": 2656,
+        "y": 1084,
+        "w": 1184,
+        "h": 671
+      },
+      "delivered": {
+        "w": 1184,
+        "h": 671,
+        "scale": 1
+      },
+      "caption": "[tile_r3c4_x2656_y1084_w1184_h671.png] source x=2656 y=1084 w=1184 h=671 | delivered 1184x671 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r4c1_x0_y1755_w748_h405.png",
+      "source": {
+        "x": 0,
+        "y": 1755,
+        "w": 748,
+        "h": 405
+      },
+      "delivered": {
+        "w": 748,
+        "h": 405,
+        "scale": 1
+      },
+      "caption": "[tile_r4c1_x0_y1755_w748_h405.png] source x=0 y=1755 w=748 h=405 | delivered 748x405 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r4c2_x748_y1755_w1183_h405.png",
+      "source": {
+        "x": 748,
+        "y": 1755,
+        "w": 1183,
+        "h": 405
+      },
+      "delivered": {
+        "w": 1183,
+        "h": 405,
+        "scale": 1
+      },
+      "caption": "[tile_r4c2_x748_y1755_w1183_h405.png] source x=748 y=1755 w=1183 h=405 | delivered 1183x405 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r4c3_x1931_y1755_w725_h405.png",
+      "source": {
+        "x": 1931,
+        "y": 1755,
+        "w": 725,
+        "h": 405
+      },
+      "delivered": {
+        "w": 725,
+        "h": 405,
+        "scale": 1
+      },
+      "caption": "[tile_r4c3_x1931_y1755_w725_h405.png] source x=1931 y=1755 w=725 h=405 | delivered 725x405 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    },
+    {
+      "path": "tile_r4c4_x2656_y1755_w1184_h405.png",
+      "source": {
+        "x": 2656,
+        "y": 1755,
+        "w": 1184,
+        "h": 405
+      },
+      "delivered": {
+        "w": 1184,
+        "h": 405,
+        "scale": 1
+      },
+      "caption": "[tile_r4c4_x2656_y1755_w1184_h405.png] source x=2656 y=1755 w=1184 h=405 | delivered 1184x405 (source px 1:1) | coordinates inside THIS image: u,v in [0,1], global = (x + u*w, y + v*h)"
+    }
+  ]
+}
